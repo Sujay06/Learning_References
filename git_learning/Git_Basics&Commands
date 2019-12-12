@@ -1,0 +1,206 @@
+GIT is basically a distributed version control sytem.
+-------------------------------------------------------------------------------------------------------------------------
+Used for:-
+ 
+1.Creating Repos
+2.Making changes to the repos
+3.Syncing Repos
+4.Parallel Development
+
+GIT PATH IN LOCAL:
+-------------------
+/home/ubuntu/Dir-name/files-name
+
+--------------------------------------------------------------------------------------------------------------------------
+GIT COMMANDS::
+--------------
+
+GIT BASICS:
+-------------
+>git init 					#To initalise a directory in local
+>git status					#To check the status of Dirs/Repos
+
+>git add <Path OR NAME of the file> 
+Eg: git add .   (OR) git add 1.txt 2.txt 3.txt......
+>git commit -m "message"			#To save Dirs/Repos and add a commit msg.
+>git remote add origin "URL to repository"	#To save commits to a particular repo.
+>git push origin master				#To push files committed to the git repo MASTER.
+>git push origin <branch-name>			#TO push files to the specified branch name.
+
+>git clone URL 					#To copy entire repo from git to local(when git repo is being used by 							 mulitple users)
+>git pull <Repo-URL>
+>git pull origin master				 #To pull the latest commit made to the git repo
+>git merge <branch-name>			#To merge 2 branches.Give the target branch name to be merged.
+Eg: git merge branch1				#branch1 merges with master.
+----------------------------------------------------------------------------------------------------------------------
+GIT BRANCHES::
+--------------
+>git branch <branch name>			#To add a branch to the master branch
+Eg: git branch branch1_testing
+>git branch 					#To know the name of the current branch you are working on.
+>git branch -D <branch-name>			#To delete a branch
+>git checkout <branch-name>  			#To switch to another branch from the current branch.
+Eg: git checkout master (or) git checkout branch1
+
+--------------------------------------------------------------------------------------------------------------------
+GIT LOGGING:
+-------------
+
+> git log 					#To check the history of the current branch that you are working on.
+>git revert <commit-id>				#To revert back to any commit made in a branch.This basically gets back to 							 any changes made to the repo before that commit.To view the changes made 							 after the commit was done use stash commit-id.
+
+--------------------------------------------------------------------------------------------------------------------
+GIT STASHING:
+-------------
+>git stash 					#To avoid any changes to be reflected on the upper branch or the master 						 branch or any other branch other than the current working branch. This does 							 not reflect the changes made once you checkout to other branch. To see the 							 changes made use git stash pop.
+>git stash pop 					#Toview the changes made to the current branch when you checkout to other 							 branches and you move back in.
+
+>git stash <commit-id>				#To view the changes made after a revert is run.
+
+-------------------------------------------------------------------------------------------------------------------------
+GIT DIFF::
+-----------
+>git diff <commit-id> <commit-id> ......        #To view the changes between any two or more commits or to compare any two or more commits.
+(OR)
+>git diff HEAD . 				#To view the changes made after latest commit and before staging it.
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

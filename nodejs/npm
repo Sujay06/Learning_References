@@ -1,0 +1,74 @@
+NPM  is node package manager.
+Url: https://npmjs.org
+
+>npm adduser		#To create an acc in NPMjs.org
+>npm login		#To login into your npm acc
+-------------------------------------------------------------------------------------------------------------------------
+To install Package.json::
+-------------------------
+>mkdir npm-demo				#To create a npm demo folder.
+>sudo npm i -g npm@<version.no>		#To install  spscific version of npm
+>sudo npm init -y			#To create a package.json file
+
+-------------------------------------------------------------------------------------------------------------------------
+To install a node-package from NPM::
+------------------------------------
+(Here we install underscore,node-cmd,node-ping,net-ping)
+ >npm install underscore	#To install undersore package(You can use flag i to insatll too instead of install(npm i underscore)).
+>npm i node-cmd			##To install node cmd
+>npm i node-ping		#To install node ping.
+>npm install node-cmd 		#To install node cmd.  
+>npm install net-ping		#Implements ICMP Echo (ping) support for Node.js.
+>npm i -g npm-check-updates	#To update to the latest major ackage updates.(Eg: v2.8.0 => v4.3.5)
+>npm i jshint --save-dev	#To install a package which is a development dependency but not applcation dependecy.
+
+Source-Control TIPS::
+---------------------
+To add all files except for the node_modules create a ".gitignore" folder and add all the files/folders to be excluded while commiting to GitHub.
+(.gitignore => nodemodules/	#Ignores all the files in node_modules)
+
+
+To list installed  NPM packages::
+---------------------------------
+>npm list				#To list all the dependecies installed in the node_modules folder.
+>npm list --depth=0			#To list the dependencies of your application.(manually installed).	
+>npm view mongoose			#To list all the metadata of mongoose package.
+>npm view mongoose dependecies		#To list only the dependencies of the npm package (here mongoose).
+>npm view mongoose versions		#To list all the versions of a package released till date.Usefull in upgrading OR downgrading packages.
+>npm i mongoose@<version.no>		#To install a specfic version of a package.
+>npm outdated				#To list all the existing outdated packages.
+>npm -g outdated			#To list all the outdated global packages.
+>npm update				#To update all the oudated packages to their most recent minor updates(Eg: v2.4.8 => v2.4.10 || Here 						 major updates cannot be performed)
+>npm-check-update			#To list all the outdated major packages
+>npm-check-update -u (OR) ncu -u	#To update all outdated packages to the latest major package.
+>npm unistall <package-name> (OR) npm un <package-name>		#To unistall a package permanently.
+  (Eg: npm un mongoose)
+>npm un -g <package-name>		#To uninstall a global package like angular,firebase,typescript, ncu etc
+
+---------------------------------------------------------------------------------------------------------------------------
+To publish your own package into NPM::
+--------------------------------------
+>mkdir sujay-cmd-lib		#Create a unique folder. This will be the name of your package in NPM.
+>cd sujay-cmd-lib		#Enter into the folder
+>npm init -y			#Initialse npm with package.json
+>add index.js			#Write an entry point to your package. Write a  function here.
+>write a function		#Write your code here.
+>npm login
+>npm publish			#To publish the changes.
+
+To test your package::
+----------------------
+>mkdir folder1
+>cd folder1
+>npm init -y
+>npm i sujay-cmd-lib
+>open in vs-code to see all the files.
+
+To update your package::
+-------------------------
+>npm version major/minor/patch	#To update depending on what changes you've made to the  file.
+(OR change the version number manually in package.json)
+>npm publish			#To publish the changes.
+
+------------------------------------------------------------------------------------------------------------------------
+

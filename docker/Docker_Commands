@@ -1,0 +1,80 @@
+DOCKER COMMANDS:::
+------------------------------------------------------------------------------------------------------------------------
+>sudo docker login
+>docker -v								#To check the version of running docker engine.
+
+>sudo docker pull <image-name>
+>sudo docker push <image-name>
+
+>sudo docker ps 
+>sudo docker ps -a
+>sudo docker images
+
+>sudo docker run -it -d <image-ID>
+>sudo docker run -it -d -p 4000:80 <image-name>				#To map to a specific port
+>sudo docker run -it -d --name=<conatiner-name> <image-name>		#To give a specific name to a container at runtime.
+>sudo docker exec -it <conatiner-ID> /bin/bash				#To enter into the container.
+
+>sudo docker build -t <reponame>/<tagname> .
+
+>sudo docker rmi -f <image-ID> <image-ID>.....
+>sudo docker rm -f  <container-iD> <container-id>.....
+>sudo docker kill <container-ID>
+>sudo docker stop <container-ID>
+>sudo docker start <container-ID>
+
+---------------------------------------------------------------------------------------------------------------------------
+DOCKER SWARM SERVICES::
+-----------------------
+Docker SWARM requires a .yml file which specifies the container parameters and constraints.
+>sudo docker swarm init							#To initialise SWARM.
+>sudo docker swarm init --advertise-address=172.x.x.x			#To initialise master node on the privateIP and 									 allow worker nodes to join the master.
+>sudo docker stack -c deploy 						#To deploy swarm containers
+>sudo docker node ls							#To list all the conatiners in the docker swarm 									 service.
+>sudo docker swarm leave 						#To leave the swarm
+
+---------------------------------------------------------------------------------------------------------------------------
+DOCKER DinD ::
+-----------------
+>sudo docker run -it -d docker:dind					#Pulls and runs docker-dind image.
+>sudo docker -v /var/run/docker.sock:/var/run/docker.sock docker  	#To run DinD in docker; and map the daemons of the 										host and container docker files.
+>sudo docker exec -it <container-id> /bin/bash
+
+----------------------------------------------------------------------------------------------------------------------------
+TO MOUNT A VOLUME IN DOCKER ::
+----------------------------------
+>sudo docker create test_vol
+>sudo docker run -it -d --mount source=<volume-name>,target=<target-file-path> <image-name>
+Eg: sudo docker run -it -d --mount source= test_vol, target=/var/www/html apache2
+
+-------------------------------------------------------------------------------------------------------------------------
+>sudo docker rmi -f $(sudo docker images -a -q)				#To remove all images at once
+>sudo docker rm -f $(sudo docker ps -a -q)				#To remove all dead containers at once
+>sudo usermod -aG docker $USER						#To change user permissions and run commands without 										"SUDO"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

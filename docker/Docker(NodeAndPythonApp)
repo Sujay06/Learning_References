@@ -1,0 +1,128 @@
+INSTALL PYTHON ::
+----------------
+sudo apt-get install python -y
+sudo apt-get install python-pip -y
+
+TO BUILD A PYTHON DOCKER IMAGE ::
+--------------------------------------------------------------S
+
+requirements.txt ::
+----------------
+Flask 
+
+--------------------------------------------------------------
+
+Dockerfile:: 
+--------------
+
+#Here app2 is the app name
+
+FROM python:2.7-slim
+WORKDIR /app2
+COPY . /app2
+RUN pip install -r requirements.txt
+ENTRYPOINT ["python"]
+EXPSOSE 8080
+ENV NAME test
+CMD ["python","app2.py"]
+
+---------------------------------------------------
+
+app2.py ::
+------------
+from flask import Flask
+
+app2 = Flask(__name__)
+
+@app2.route("/")
+def hello():
+    return "Flask inside Docker!!"
+
+if __name__ == "__main__":
+    app2.run(debug=True,host='localhost',port='8080')
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+TO BUILD A DOCKERIZIED NODE-APP[HELLO-WORLD APP]::
+-------------------------------------------------
+DOCKERFILE::
+-------------
+
+FROM node:10
+WORKDIR /usr/src/app
+COPY *.json ./
+RUN npm install
+COPY . .
+EXPOSE 8080
+CMD ["npm" ,"start"]
+
+
+------------------------------------------------------------------
+
+PACKAGE.json::
+----------------
+
+{  "name": "docker_web_app",
+  "version": "1.0.0",
+  "description": "Node.js on Docker",
+  "author": "First Last <first.last@example.com>",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.16.1"
+  }}
+
+---------------------------------------------------------------
+
+SERVER.js::
+-------------
+
+'use strict';
+const express = require('express'); 
+
+// Constants
+const PORT = 8080;
+const HOST = '0.0.0.0'; 
+
+// App
+const app = express();
+app.get('/', (req, res) => {
+  res.send('Hello world\n');
+});
+
+app.listen(PORT, HOST);
+console.log(`Running on http://${HOST}:${PORT}`);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+DOCKER-SWARM:
+--------------
+
+Docker SWARM requires a .yml file which specifies the container parameters and constraints.
+
+
+version: "3"
+services:
+  web:
+    # replace username/repo:tag with your name and image details
+    image: andalike/node-web-app
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "4000:80"
+    networks:
+      - webnet
+networks:
+  webnet:
+
