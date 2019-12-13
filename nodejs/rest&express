@@ -1,0 +1,29 @@
+REST: Representational State Transfer
+-------------------------------------
+
+URL:  http://abc.com/api/customer
+----------------------------------
+
+Standard HTTP methods:
+----------------------
+GET:	/api/customers (OR) /api/customers/1		#To list all customers or just customer with id:1
+PUT:	/api/customers/1				#To update customer with id:1
+POST:	/api/customers (OR) /api/customers/1		#To create customers or just customer with id:1
+DELETE:	/api/customers (OR) /api/customers/1		#To delete all customers or just customer with id:1
+
+---------------------------------------------------
+EXPRESS FRAMEWORK::
+-------------------
+
+GET STARTED:
+-------------
+>mkdir express-demo	#create a folder for express
+>cd express-demo
+>npm init -y		#Initialize package.json
+>npm i express		#To install express
+>write a web-server code and execute
+
+>npm i -g nodemon	# To monitor all the node processes. 
+>npm i joi		#To validate the client request
+
+
