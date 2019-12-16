@@ -1,4 +1,5 @@
-REST: Representational State Transfer
+
+EST: Representational State Transfer
 -------------------------------------
 
 URL:  http://abc.com/api/customer
@@ -7,14 +8,43 @@ URL:  http://abc.com/api/customer
 Standard HTTP methods:
 ----------------------
 GET:	/api/customers (OR) /api/customers/1		#To list all customers or just customer with id:1
-PUT:	/api/customers/1				#To update customer with id:1
 POST:	/api/customers (OR) /api/customers/1		#To create customers or just customer with id:1
+PUT:	/api/customers/1				#To update customer with id:1
 DELETE:	/api/customers (OR) /api/customers/1		#To delete all customers or just customer with id:1
 
----------------------------------------------------
+How methods work??
+------------------
+GET-Method:
+-----------
+>write the path and display the required output.
+
+POST-Method:
+------------
+STEP 1:	>Validate the input.
+	>If not validated, send a 400 (bad request) error.
+STEP 2: >Update the course parameters.
+	>Display the updated course back to the screen/client.
+STEP 3: >Push the course to the existing array.
+
+PUT-Method:
+-----------
+STEP1:	>Look for the requested course
+	>If not found, send a 404 (invalid query)error.
+STEP2:	>Validate the course.
+	>If not validated, send a 400 (bad request) error
+STEP3:	>Update the course.
+	>Display the updated course back to the screen/client.
+
+Delete-Method:
+--------------
+STEP 1:	>Look for the requested course
+	>If not found, send a 404 (invalid query)error.
+STEP 2: >Delete the course using splice method.
+STEP 3: >Display the updated course back to the screen/client.
+
+--------------------------------------------------------------------------------------------
 EXPRESS FRAMEWORK::
 -------------------
-
 GET STARTED:
 -------------
 >mkdir express-demo	#create a folder for express
@@ -26,4 +56,4 @@ GET STARTED:
 >npm i -g nodemon	# To monitor all the node processes. 
 >npm i joi		#To validate the client request
 
-
+---------------------------------------------------------------------------------------------
