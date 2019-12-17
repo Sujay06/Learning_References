@@ -1,0 +1,32 @@
+MIDDLEWARE:
+-----------
+
+"USE MIDDLEWARE ONLY WHEN NEEDED, ELSE IT SLOWS THE REQUEST PROCESSING CAPACITY OF YOUR CODE!!"
+
+>Middleware is a subset of chained functions called by the Express js routing layer before the user-defined handler is invoked. 
+>Middleware functions have full access to the request and response objects and can modify either of them.
+
+
+Client Req -> MIDDLEWARE -> Server Response
+
+Built-in middlewares available in Express::
+-------------------------------------------
+>index.use(express.json()); 	//To parse req.body from the req.
+>index.use(express.urlencoded({extended : true}));	//To add client req to the server.	
+>index.use(express.static('public'));	//To add public files like css and html.
+
+To create your own custom middleware functions::
+-------------------------------------------------
+>create a separate file with the required function & code , export it to the index.js file using module.exports
+>write the const test = require("./<file-name>");
+>write index.use(test);		//your middleware is called!!
+
+Third-party middlwares avialble in express::
+-------------------------------------------
+>Head to expressjs.com -> resources -> middleware
+
+Few handy one's are listed below:
+>Morgan(npm i morgan)	//To log each http request made to the server.
+>Helmet(npm i helmet)	//To secure your apps by setting various HTTP headers.
+
+
