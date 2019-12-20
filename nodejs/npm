@@ -13,14 +13,21 @@ To install Package.json::
 -------------------------------------------------------------------------------------------------------------------------
 To install a node-package from NPM::
 ------------------------------------
-(Here we install underscore,node-cmd,node-ping,net-ping)
- >npm install underscore	#To install undersore package(You can use flag i to insatll too instead of install(npm i underscore)).
->npm i node-cmd			##To install node cmd
+(List of all npm packages used in NodeJs Learning)
+>npm install underscore	#To install undersore package(You can use flag i to insatll too instead of install(npm i underscore)).
+>npm i node-cmd			#To install node cmd
 >npm i node-ping		#To install node ping.
 >npm install node-cmd 		#To install node cmd.  
 >npm install net-ping		#Implements ICMP Echo (ping) support for Node.js.
 >npm i -g npm-check-updates	#To update to the latest major ackage updates.(Eg: v2.8.0 => v4.3.5)
 >npm i jshint --save-dev	#To install a package which is a development dependency but not applcation dependecy.
+>npm i express			#To install express which provides smooth HTTP method processing(rest&express).
+>npm i joi			#To perform client req(input) validation(rest&express).
+>npm i morgan			#To log each and every HTTP reqs made to the server(Middleware).
+>npm i helmet			#To secure your apps by setting various HTTP headers.(Middleware).
+>npm i rc 			#To store connfiguration settings(Middleware).
+>npm i config			#To store connfiguration settings(Middleware).
+
 
 Source-Control TIPS::
 ---------------------

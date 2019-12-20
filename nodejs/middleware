@@ -8,7 +8,7 @@ MIDDLEWARE:
 
 
 Client Req -> MIDDLEWARE -> Server Response
-
+---------------------------------------------------------------------------------------------------------------------------
 Built-in middlewares available in Express::
 -------------------------------------------
 >index.use(express.json()); 	//To parse req.body from the req.
@@ -28,5 +28,19 @@ Third-party middlwares avialble in express::
 Few handy one's are listed below:
 >Morgan(npm i morgan)	//To log each http request made to the server.
 >Helmet(npm i helmet)	//To secure your apps by setting various HTTP headers.
+
+----------------------------------------------------------------------------------------------------------------------------
+Working with Environment Variables::
+------------------------------------
+>To determine if the env is test/development/production set env-variables accordingly.
+>Env-Var can be set using either of the two ways:
+	1.console.log(`node env is:  ${process.env.NODE_ENV}`);	//Dynamic assignment(Set at run time using "export NODE_ENV= <TypeOfEnv>")
+    	2.console.log(`app env is : ${index.get('env')}`);	//By default sets var to Development.
+
+Working with configuration settings:
+-------------------------------------
+(Helps to set settings specific to ENV you are working on like default, test, dev, prod etc)
+>npm i config	#To store connfiguration settings.
+>Create .json files here and store the settings(eg: name, env, dependencies etc).
 
 
