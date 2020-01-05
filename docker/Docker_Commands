@@ -1,5 +1,17 @@
-DOCKER COMMANDS:::
-------------------------------------------------------------------------------------------------------------------------
+DOCKER INSTALLATION(UBUNTU)::
+-----------------------------
+sudo apt-get remove docker docker-engine docker.io containerd runc
+sudo apt-get update -y
+sudo apt-get install  apt-transport-https     ca-certificates     curl     gnupg-agent     software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo apt-key fingerprint 0EBFCD88
+sudo add-apt-repository    "deb [arch=amd64] https://download.docker.com/linux/ubuntu    $(lsb_release -cs)    stable"
+sudo apt-get update -y
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+
+----------------------------------------------------------------------------------------------------------------------
+DOCKER COMMANDS::
+-----------------
 >sudo docker login
 >docker -v								#To check the version of running docker engine.
 
@@ -23,10 +35,61 @@ DOCKER COMMANDS:::
 >sudo docker stop <container-ID>
 >sudo docker start <container-ID>
 
+DOCKER-PRUNE::	(PRUNE to clean up disk space)
+--------------
+Image Prune::
+-------------
+>sudo docker image prune				#To remove any dangling image. A dangling image is one that is not tagged and is not 								 referenced by any container.
+>sudo docker image prune -a				#To remove all images which are not used by existing containers, use the -a flag.
+>sudo docker image prune --filter "until=24h"		#To remove all the dangling images stopped for more than 24hrs.
+
+Container Prune::
+-----------------
+>sudo docker container prune				#To stop all the stopped containers.
+>sudo docker container prune -a
+>sudo docker container prune --filter "until=24h"	#To remove all the stopped containers for more than 24hrs.
+
+Volume Prune::
+--------------
+>sudo docker volume prune				#To remove docker volume.
+>sudo docker volume prune --filter "label!=keep"	#To remove volumes which are not labelled with the keep label
+
+Network Prune::
+---------------
+>sudo docker network prune				#To clean things like iptables rules, bridge network devices, and route table entries.
+>sudo docker network prune --filter "until=24h"		#To remove networks older than 24 hours.
+
+System Prune(Prune everything)::
+--------------------------------
+(The docker system prune command is a shortcut that prunes images, containers, and networks, but does not prune volumes(it shoud be explicitly mentioned))
+>sudo docker system prune				#To prune everything except docker volumes.
+>sudo docker system prune --volumes			#To prune everything including docker volumes.
+
 ---------------------------------------------------------------------------------------------------------------------------
 DOCKER SWARM SERVICES::
 -----------------------
 Docker SWARM requires a .yml file which specifies the container parameters and constraints.
+
+version: "3"
+services:
+  web:
+    # replace username/repo:tag with your name and image details
+    image: andalike/node-web-app
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "4000:80"
+    networks:
+      - webnet
+networks:
+  webnet:
+
 >sudo docker swarm init							#To initialise SWARM.
 >sudo docker swarm init --advertise-address=172.x.x.x			#To initialise master node on the privateIP and 									 allow worker nodes to join the master.
 >sudo docker stack -c deploy 						#To deploy swarm containers
@@ -36,13 +99,20 @@ Docker SWARM requires a .yml file which specifies the container parameters and c
 ---------------------------------------------------------------------------------------------------------------------------
 DOCKER DinD ::
 -----------------
->sudo docker run -it -d docker:dind					#Pulls and runs docker-dind image.
+>sudo docker run -it -d docker:dind					#Pulls and runs docker-dind imasudo ge.
 >sudo docker -v /var/run/docker.sock:/var/run/docker.sock docker  	#To run DinD in docker; and map the daemons of the 										host and container docker files.
 >sudo docker exec -it <container-id> /bin/bash
 
 ----------------------------------------------------------------------------------------------------------------------------
+DOCKER-VOLUMES::
+----------------
+>sudo docker volume create test_vol		#To create a new volume called "test_vol"
+>sudo docker volume ls				#To list volumes
+>sudo docker volume inspect test_vol		#To render attributes of a volume
+>sudo docker volume rm test_vol			#To remove a volume
+
 TO MOUNT A VOLUME IN DOCKER ::
-----------------------------------
+------------------------------
 >sudo docker create test_vol
 >sudo docker run -it -d --mount source=<volume-name>,target=<target-file-path> <image-name>
 Eg: sudo docker run -it -d --mount source= test_vol, target=/var/www/html apache2
@@ -51,30 +121,3 @@ Eg: sudo docker run -it -d --mount source= test_vol, target=/var/www/html apache
 >sudo docker rmi -f $(sudo docker images -a -q)				#To remove all images at once
 >sudo docker rm -f $(sudo docker ps -a -q)				#To remove all dead containers at once
 >sudo usermod -aG docker $USER						#To change user permissions and run commands without 										"SUDO"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
