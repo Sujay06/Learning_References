@@ -39,7 +39,7 @@ DOCKER-PRUNE::	(PRUNE to clean up disk space)
 --------------
 Image Prune::
 -------------
->sudo docker image prune				#To remove any dangling image. A dangling image is one that is not tagged and is not 								 referenced by any container.
+>sudo docker image prune				#To remove any dangling image. A dangling image is one that is not tagged and is not referenced by any container.
 >sudo docker image prune -a				#To remove all images which are not used by existing containers, use the -a flag.
 >sudo docker image prune --filter "until=24h"		#To remove all the dangling images stopped for more than 24hrs.
 
@@ -91,16 +91,16 @@ networks:
   webnet:
 
 >sudo docker swarm init							#To initialise SWARM.
->sudo docker swarm init --advertise-address=172.x.x.x			#To initialise master node on the privateIP and 									 allow worker nodes to join the master.
+>sudo docker swarm init --advertise-address=172.x.x.x			#To initialise master node on the privateIP and allow worker nodes to join the master.
 >sudo docker stack -c deploy 						#To deploy swarm containers
->sudo docker node ls							#To list all the conatiners in the docker swarm 									 service.
+>sudo docker node ls							#To list all the conatiners in the docker swarm service.
 >sudo docker swarm leave 						#To leave the swarm
 
 ---------------------------------------------------------------------------------------------------------------------------
 DOCKER DinD ::
 -----------------
->sudo docker run -it -d docker:dind					#Pulls and runs docker-dind imasudo ge.
->sudo docker -v /var/run/docker.sock:/var/run/docker.sock docker  	#To run DinD in docker; and map the daemons of the 										host and container docker files.
+>sudo docker run -it -d docker:dind				  	#Pulls and runs docker-dind image from docker-hub.
+>sudo docker -v /var/run/docker.sock:/var/run/docker.sock docker  	#To run DinD in docker; and map the daemons of the host and container docker files.
 >sudo docker exec -it <container-id> /bin/bash
 
 ----------------------------------------------------------------------------------------------------------------------------
