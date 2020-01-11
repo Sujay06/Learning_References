@@ -2,7 +2,7 @@ DOCKER INSTALLATION(UBUNTU)::
 -----------------------------
 sudo apt-get remove docker docker-engine docker.io containerd runc
 sudo apt-get update -y
-sudo apt-get install  apt-transport-https     ca-certificates     curl     gnupg-agent     software-properties-common
+sudo apt-get install -y apt-transport-https     ca-certificates     curl     gnupg-agent     software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo apt-key fingerprint 0EBFCD88
 sudo add-apt-repository    "deb [arch=amd64] https://download.docker.com/linux/ubuntu    $(lsb_release -cs)    stable"
@@ -12,8 +12,17 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 ----------------------------------------------------------------------------------------------------------------------
 DOCKER COMMANDS::
 -----------------
+>sudo docker info			#Provides all info regarding most of the docker components 
 >sudo docker login
->docker -v								#To check the version of running docker engine.
+>docker -v				To check the version of running docker engine.
+>systemctl restart docker		#To restart the  docker-host
+>sudo docker run --help			#To list all the options available for docker run(--help works with all docker commands!!)
+>sudo docker run --help | grep rm 	#To view what are the options available for run adn shortlist it to rm 
+>sudo docker stop --help
+>sudo docker exec --help
+> df -h 				#To list the disk utilization of the host machine(this is only for linux OS)
+>docker system df			#To list the disk utilization by the docker-host(i.e contaniers, images,cache,volumes)
+>docker system df -v			#To list the disk usage by individual docker items like contaniers, images,cache,volumes.
 
 >sudo docker pull <image-name>
 >sudo docker push <image-name>
@@ -22,10 +31,28 @@ DOCKER COMMANDS::
 >sudo docker ps -a
 >sudo docker images
 
->sudo docker run -it -d <image-ID>
->sudo docker run -it -d -p 4000:80 <image-name>				#To map to a specific port
->sudo docker run -it -d --name=<conatiner-name> <image-name>		#To give a specific name to a container at runtime.
->sudo docker exec -it <conatiner-ID> /bin/bash				#To enter into the container.
+>sudo docker run -it -d <image>
+>sudo docker run -it -d -p 4000:80 <image>			#To map to a specific port
+>sudo docker run -it -d --name=<conatiner-name> <image>		#To give a specific name to a container at runtime.
+>sudo docker run -it -d <image> sleep 50			#To run the container for 50secs and then exits the container.
+>sudo docker run -it -d <image> -arg1 -arg2 -arg3		#To pass the required args to be run at the runtime of the container.
+>sudo docker run -it -d <image> ping -c10 google.com		#To run a container which pings google.com 10times and then exits automatically.
+>sudo docker run -dt --rm <image> ping -c10 google.com		#To run a container which pings google.com 10 times and exits automatically and then is removed permanently from the docker-host(Best practise to free up disk-space from unwanted containers)
+
+
+>sudo docker exec -it <conatiner-ID> bash				#To enter into the container.
+	Nginx using exec(Working with Docker EXEC command):
+	---------------------------------------------------
+	(The command started with docker-exec runs only when container's primary process is running)
+		>sudo docker run -d --name=test_nginx nginx
+		>sudo docker exec -it test_nginx bash
+		>/etc/init.d/nginx status	#To check the status of nginx service.
+		>apt-get update 
+		>apt-get install net-tools		#To install net-tools
+		>netstat -ntlp		#To list all the active connections to the container.
+		>which netstat 		#To determine where the netstat file is located(displays /bin/netstat)
+		>exit(to exit the container)
+		>sudo docker exec -it test_nginx netstat -ntlp		#To show that exec commands work without being logically logged in to the conatiner(This can work only when the prosess is running with PID=1).
 
 >sudo docker build -t <reponame>/<tagname> .
 
@@ -34,6 +61,8 @@ DOCKER COMMANDS::
 >sudo docker kill <container-ID>
 >sudo docker stop <container-ID>
 >sudo docker start <container-ID>
+
+>sudo docker inspect <container-ID>			#To view all the date for a container
 
 DOCKER-PRUNE::	(PRUNE to clean up disk space)
 --------------
@@ -110,6 +139,7 @@ DOCKER-VOLUMES::
 >sudo docker volume ls				#To list volumes
 >sudo docker volume inspect test_vol		#To render attributes of a volume
 >sudo docker volume rm test_vol			#To remove a volume
+>sudo docker volume prune <test_vol>		#To remove one or more unused docker volumes
 
 TO MOUNT A VOLUME IN DOCKER ::
 ------------------------------
@@ -118,6 +148,109 @@ TO MOUNT A VOLUME IN DOCKER ::
 Eg: sudo docker run -it -d --mount source= test_vol, target=/var/www/html apache2
 
 -------------------------------------------------------------------------------------------------------------------------
+DOCKER-COMMAND-PIPING::
+-----------------------
+>sudo docker container stop $(sudo docker container ls -a -q)		#To stop multiple containers all at once
+>sudo docker container start $(sudo docker container ls -a -q)		#To start multiple containers all at once
 >sudo docker rmi -f $(sudo docker images -a -q)				#To remove all images at once
 >sudo docker rm -f $(sudo docker ps -a -q)				#To remove all dead containers at once
->sudo usermod -aG docker $USER						#To change user permissions and run commands without 										"SUDO"
+
+>sudo usermod -aG docker $USER						#To change user permissions and run commands without "SUDO"
+--------------------------------------------------------------------------------------------------------------------------
+DOCKER NETWORKING::
+-------------------
+
+>sudo docker network ls						#To list the available networks
+>sudo docker run --network=<NETWORK> <Image>			#To specify the type of n/w for the container to run in.
+>ip addr show (OR) ip a						#To list all the networks with details.
+>sudo docker network inspect <NETWORK>				#To list all the details regarding that n/w type.
+Eg: sudo docker network inspect bridge
+>sudo docker network create --driver <n/w type>	<unique_name>	#To create a network n/w with desired n/w type.
+Eg: sudo docker network create --driver bridge isolated_net(Creates new bridge n/w with name isolated_net)
+
+
+
+Docker-Network-Drivers::
+------------------------
+>Bridge: 
+	1.Default network driver.
+	2.Used when your applications run in standalone containers.
+	3.A bridge can be a hardware device or a software device running within a host machine’s kernel.
+	4.Bridge network uses a software bridge which allows containers connected to the same bridge network to communicate.
+	5.Two types: Default bridge, User-Defined bridge.
+	6.Every container is assigned it's own IP.
+(Creates a private n/w, all the containers are placed here. All the containers in this n/w are able to communicate with each other)
+
+>sudo docker create --name mynignx --network my_net -p 8080:80 nginx	#Creates a container for nginx, and creates a network called my_net for the container.
+>sudo docker network connect my_net mynignx	#Connects existing running container(mynignx) to bridge n/w(my_net)
+>sudo docker network disconnect my_net mynignx	#Disconnects container(mynignx) from n/w(my_net)
+
+	---------------------------------------------------------------------------------------------------------------------------------------
+>Host:
+	1.Available for Docker-Swarm services only
+	2.Removes network isolation between the container and the Docker host, and uses the host’s networking directly.
+	3.Gets the IP of the host machine.
+	4.Cannot map any ports here(-p flag does not work)
+	---------------------------------------------------------------------------------------------------------------------------------------
+>Overlay:
+	1.Connect multiple Docker daemons together and enable swarm services to communicate with each other.
+	2.Can also use overlay networks to facilitate communication between a swarm service and a standalone container, or between two standalone 		  containers on different Docker daemons.
+	3.You need the following ports open to traffic to and from each Docker host participating on an overlay network:
+	    TCP port 2377 for cluster management communications
+	    TCP and UDP port 7946 for communication among nodes
+	    UDP port 4789 for overlay network traffic
+>sudo docker network create  -d overlay my_overlay_net		#To create a overlay n/w for swarm services.
+>sudo docker network create -d overlay --attachable my_attachable_overlay_net		#To create a overlay n/w for services to connect to standalone or to conect two standalone conatiners.
+
+	---------------------------------------------------------------------------------------------------------------------------------------
+>Maclavan:
+	1.Allows you to assign MAC addrs to teh containers, making it appear as a single-physical device.
+	2.The Docker daemon routes traffic to containers by their MAC addresses.
+	3.Best suited for legacy applications, which need to be directly connected to the physical network.
+	---------------------------------------------------------------------------------------------------------------------------------------
+>None:
+	1.For this container, disable all networking.
+	2.Usually used in conjunction with a custom network driver. None is not available for swarm services. 
+	---------------------------------------------------------------------------------------------------------------------------------------
+Summary::
+---------
+1.User-defined bridge networks are best when you need multiple containers to communicate on the same Docker host.
+2.Host networks are best when the network stack should not be isolated from the Docker host, but you want other aspects of the container to be isolated.
+3.Overlay networks are best when you need containers running on different Docker hosts to communicate, or when multiple applications work together using swarm services.
+4.Macvlan networks are best when you are migrating from a VM setup or need your containers to look like physical hosts on your network, each with a unique MAC address.
+5.Third-party network plugins allow you to integrate Docker with specialized network stacks.
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+BusyBox Commands:
+-----------------
+(Run a busybox image and exec into the container(use sh at the end instead of bash))
+
+>dd if=/dev/zero of=bigfile.txt bs=1M count=500		#To create a single txt file called bigfile.txt of sixe 500Mb inside busybox container
+>du -sh bigfile.txt	#To list the size of the file caled bigfile.txt
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
