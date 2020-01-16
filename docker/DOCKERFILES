@@ -1,9 +1,49 @@
 DOCKERFILES::
----------------------------
+-------------
+FROM 
+RUN
+COPY
+ADD 
+EXPOSE
+ENV
+HEALTHCHECK
+ENTRYPOINT
+CMD
+-----------------------------------------------------------------------------------------------------------------------------
+FROM::
+------
+(To specify th base image from which the container needs to be built)
 
+Eg:	FROM ubuntu
+	FROM busybox
+	FROM httpd
+-----------------------------------------------------------------------------------------------------------------------------
+ADD and COPY::
+----------------
+(COPY is used to copy files from src to dst; ADD is same as copy but it can also be used to copy URls(from web) and copy uncompressed files from compressed files(tar files) from src to dst)
+COPY <src> <dst>
+ADD <src> <dst>
+-----------------------------------------------------------------------------------------------------------------------------
+HEALTHCHECK::
+-------------
+HEALTHCHECK --interval=5s(default = 30s)
+	    --timeout=5s(default = 30s)
+	    --start-period=5s(default=0s)
+	    --retries=5(default=3)
+Eg: HEALTHCHECK --interval=10s CMD ping -c1 172.18.0.3
+    HEALTHCHECK --timeout=15s 
+-----------------------------------------------------------------------------------------------------------------------------
+CMD and ENTRYPOINT::
+--------------------
+(CMD is used to pass a command at runtime but this can be manually over-ridden; ENTRYPOINT is also used to pass commands at runtime, but these commands cannot be over-ridden)
+Eg:
+	CMD ["sh"]	#In Dockerfile
+	sudo docker run -dt --name=<> <image> ping c10 google.com	#"ping" over-rides "sh" here
 
-
-TO BUILD A HELLO WORLD AND ECHO IT ON IMAGE-RUN ::
+	ENTRYPOINT ["/bin/ping"]	#In Dockerfile
+	sudo docker run -dt --name=<> <image> sh		#"sh" is appended with "ping" here ("/bin/ping sh")
+----------------------------------------------------------------------------------------------------------------------------
+BUILD A HELLO WORLD AND ECHO IT ON IMAGE-RUN ::
 ---------------------------------------------
 
 FROM ubuntu
@@ -48,7 +88,17 @@ RUN apt-get install apache2 -y
 ADD . /var/www/html
 ENTRYPOINT  apachectl -D FOREGROUND   (OR) CMD apachectl -D FOREGROUND 
 ENV apache2 test_image
+----------------------------------------------------------------------------------------------------------
+TO BUILD CUSTOM NGINX WEB-SERVER::
+----------------------------------
 
+FROM ubuntu
+RUN apt-get update 
+RUN apt-get -y install nginx
+COPY index.nginx-debian.html /var/www/html	#Create index.nginx-debian.html file in the same folder as of Dockerfile
+CMD nginx -g 'daemon off;'
 
 -----------------------------------------------------------------------------------------------------------
+
+
 
