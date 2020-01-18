@@ -1,0 +1,156 @@
+CONTAINER-ORCHESTRATION:
+------------------------
+(Managing of multiple containers at the same time)
+
+Orchestration services available::
+1.Docker Swarm
+2.Kubernetes
+3.Apache Mesos
+4.AWS ECS & EKS
+
+Docker swarm services::
+-----------------------
+(Open ports 
+	2377	#For cluster manangement
+	7946	#For communication among nodes
+	4789	#For overlay n/w traffic )
+Create Swarm:(Creates Manager Node)
+-------------
+(Run in manager machine)::
+------------------------
+>docker swarm init		#Initialise the swarm and advertise the IP.
+(OR)
+>docker swarm init --advertise-addr 192.x.x.x
+(Save locally the worker node swarm token from here)
+>docker info			#Check whether the swarm is active or not
+>docker node ls			#List the manager node and it's ID
+(Run swarm join command in worker machine to join to the swarm)
+
+Add Worker-node to the Mananger node::(Run in Worker machine)
+-------------------------------------
+>docker swarm join --token SWMTKN-1-49nj1cmql0jkz5s954yi3oex3nedyz0fb0xx14ie39trti4wxv-8vxv8rssmk743ojnwacrr2e7c 192.168.99.100:2377
+(If this token is not available, run "docker swarm join-token worker" to get the token )
+	Ps: NOw the worker node would have joined the swarm!!!...
+
+Run in manager machine:
+----------------------
+>docker node ls		#To check the list of all the nodes in the swarm(lists both worker and manager node)
+
+To create a service and scale the service::(Run in manager)
+------------------------------------------------------------
+(TASK: A task is a container running in the service)
+
+>docker service create --replicas 1 --name helloworld alpine ping docker.com		#Creates 1 service replica named "helloworld" using "alpine" image and runs the command "ping" at runtime of the container.
+>docker service create --name antivirus --mode global -dt ubuntu	#To make the service global. Orchestrator runs this service as a task in all the nodes.
+>docker service ls				#To list the running services
+
+>docker service inspect helloworld		#This outputs the service list in JSON format.
+>docker service inspect --pretty helloworld	#This outputs the service in readable format.
+>docker service ps helloworld			#To list the nodes running in the service
+>docker ps					#To see the details of the container running the task
+
+>docker service scale helloworld=3		#Scales the helloworld service to 3 tasks.
+>doker service scale <service01>=5 <service02>=10	#SCale command lets you scale more than 1 service at the same time
+>docker service update --replicas=5 helloworld	#Scales the helloworld service to 5 tasks.Update can scale one service at a time.
+
+>docker service ps helloworld			#Toview the scaled service containers
+>docker ps					#To see all the running containers
+
+>docker service rm helloworld			#Removes the helloworld service
+>docker service inspect helloworld		#To verify the removal of the service.
+>docker ps					#To verify that the containers are removed.
+
+Docker-Node Draining:
+---------------------
+(For Maintenance Use-Cases)
+(Create mode than 2 worker nodes(Swarm01(Manager),Swarm02(Worker),Swarm03(Worker)))
+>docker node ls							#To list all the running nodes
+>docker service create --name mywebserver --replicas 5 nginx	#Create the service
+>docker service ps mywebserver					#Check the running tasks in the service
+>docker node update --availablity drain swarm03			#Mark Swarm03 as drain. This shuts down the Swarm03 node and all the tasks running in it are distributed between Swarm01 & Swarm02. Availabilty can be wither drain or active.
+>docker service ps mywebserver					#Check the running tasks in the service
+>docker node ls							#To check the status of the nodes
+>docker node update --availability active swarm03		#To bring up the swarm03 and this distributes the tasks between all the 3 nodes.
+
+>docker service inpsect <service-name>				#To list all the info regarding the service.Prints the outpt in JSON format.
+>docker service inpsect --pretty <service-name>			#Outputs in readable format.
+
+>docker node inspect <node-ID (OR) node-name>			#To list all the info regarding a node in JSON format.
+>docker node inspect <node-ID (OR) node-name> --pretty		#Outputs in readable format.
+
+>docker service create --name <service-name> --replicas <int> -p <int>:<int> <image>	#To publish a port for the internet to connect to the service.
+	Eg: docker service create --name mywebserver --replicas 2 -p 8080:80 nginx
+		>netsat -ntlp		#To check the port mappings
+		>ifconfig --eth0	#Get the external IP.
+		>curl <IP-Addr>:8080	#To see the nginx homepage
+
+
+DOCKER-COMPOSE::
+----------------
+(On Linux machines you have to install docker-compose. On Mac & Windows it comes pre-installed)
+
+To install on Linux Machines:
+-----------------------------
+>sudo curl -L "https://github.com/docker/compose/releases/download/1.25.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+>sudo chmod +x /usr/local/bin/docker-compose	#To change the permission
+>docker-compose -v	#To check the version
+
+>Create a docker-compose.yml file
+	(PS: YAML is indentation specific!!!)
+
+>docker-compose config		#Lists any errors in the compose file, else displays the contents of the file
+>docker-compose up -d 		#To initiate the compose
+>docker ps			#To see the running containers in the compose
+>docker-compose down		#To take down the compose
+
+Docker Stack Deploy::
+---------------------
+>docker node ls			#To list all the running nodes
+>docker-compose up -d
+>docker stack deploy --compose-file docker-compose.yml <stack-name>	#To deploy the stack
+   Eg: docker stack deploy --compose-file docker-compose.yml mydemo
+>docker stack ps mydemo		#To check the status of the stack
+>docker stack rm mydemo		#To remove the stack
+
+Locking Swarm Cluster::
+-----------------------
+>docker node ls			#To list the runnig nodes in the swarm
+
+	To view the private key for the docker swarm::
+		cd /var/lib/docker
+		cd swarm
+		cd certificates
+		cat swarm-node-key
+
+>docker swarm update --autolock=true	#To enable the swarm lock feature.This provides the lock-key.Save this key to unlock the swarm in future
+>systemctl restart docker		#Restart the docker daemon for the docker swarm lock to take place
+>docker node ls				#This basically says that swarm is locked 
+>docker swarm unlock 			#Pass the lock-key here
+>docker node ls				#This lists the unlocked-running-nodes in the swarm
+>docker swarm unlock-key		#To retrieve the unlock-key
+>docker swarm unlock-key --rotate	#To rotate the key
+>docker swarm update --autolock=false	#To disable the swarm locking feature
+
+Mounting Volumes via Swarm::
+----------------------------
+>docker service create --name myservice --mount type=volume,source=myvol,target=/mypath nginx		#Create a service named myservice from nginx image and mount "myvol" volume specified in the path /mypath.
+>docker service ps myservice		#To check in which swarm the volume is created and mounted.
+(Go to the particular swarm)
+>docker ps				#To list the running task
+>docker volume ls			#To list the volumes in the node
+>docker exec -it <Container-ID> bash	#Enter into the container
+(Create a file called test.txt in "myvol" and exit the container)
+>ls -l					
+>cd /mypath/
+>touch test.txt
+>exit
+>cd /var/lib/docker/volumes/myvol/_data
+>ls
+(Should display test.txt)
+
+(Delete the service and check whether the Volume is removed or not)
+>docker service rm myservice		#To remove the service
+>docker volume ls			#To check whether myvol still persists or not
+>ls -l					#TO list test.txt
+
+

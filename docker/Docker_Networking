@@ -1,0 +1,96 @@
+DOCKER NETWORKING::
+-------------------
+
+Basic Linux Network Commands::
+------------------------------
+>ifconfig	#Interface-Configuration. lists active connections to the host
+>ifconfig -a 	#Lists all the connections to the host even if they are down.
+>ifconfig -s 	#Lists the connections in short-hand form
+>ifconfig -v	#Run ifconfig in Verbose mode(Logs more details)
+>ifconfig interface up		#To activate the interface
+>ifconfig interface down	#To deactivate the interface
+
+>route -n	#Shows Kernel IP routing table
+>apt-get update && apt-get install net-tools && apt-get install iputils-ping #To install net-tools and ip-utilities and update.
+
+Docker-N/W Commands::
+---------------------
+>sudo docker network ls						#To list the available networks
+>sudo docker run --network=<NETWORK> <Image>			#To specify the type of n/w for the container to run in.
+>ip addr show (OR) ip a						#To list all the networks with details.
+>sudo docker network inspect <NETWORK>				#To list all the details regarding that n/w type.
+	Eg: sudo docker network inspect bridge
+>sudo docker network inspect bridge -f="{{json .IPAM.Config}}"	#To pass filters to narrow down the search results.
+
+>sudo docker network create --driver <n/w type>	<unique_name>	#To create a network n/w with desired n/w type.
+	Eg: sudo docker network create --driver bridge isolated_net(Creates new bridge n/w with name isolated_net)
+
+Docker-Network-Drivers::
+------------------------
+>BRIDGE:
+-------- 
+	1.Default network driver.
+	2.Used when your applications run in standalone containers.
+	3.A bridge can be a hardware device or a software device running within a host machine’s kernel.
+	4.Bridge network uses a software bridge which allows containers connected to the same bridge network to communicate.
+	5.Two types: Default bridge, User-Defined bridge.
+	6.Every container is assigned it's own IP.
+(Creates a private n/w, all the containers are placed here. All the containers in this n/w are able to communicate with each other)
+
+>sudo docker create --name mynignx --network my_net -p 8080:80 nginx	#Creates a container for nginx, and creates a network called my_net for the container.
+>sudo docker network connect my_net mynignx	#Connects existing running container(mynignx) to bridge n/w(my_net)
+>sudo docker network disconnect my_net mynignx	#Disconnects container(mynignx) from n/w(my_net)
+
+>brctl show	#lists the bridge-name,ID and all the interfaces connected to it.
+
+
+To link 2 containers on default-bridge::(Legacy command, not recommended)
+----------------------------------------
+(Use --link command)
+Example:
+	>sudo docker run -dt --name cont1 ubuntu
+	>sudo docker run -dt --link cont1:cont0 --name cont2 ubuntu	#Use cont0 as a intermediatery name which can be used to connect to cont1.
+	(Ps: cont2 can connect to cont1 but vice-cersa is not possible!!!)
+
+USER-DEFINED BRIDGE::
+---------------------
+>Provides user-friendly DNS resolution(You can ping other containers on this n/w using the custom names instead of their IPs)
+>Better container isoationa dn interoperability.
+	---------------------------------------------------------------------------------------------------------------------------------------
+>HOST:
+------
+	1.Available for Docker-Swarm services only
+	2.Removes network isolation between the container and the Docker host, and uses the host’s networking directly.
+	3.Gets the IP of the host machine.
+	4.Cannot map any ports here(-p flag does not work)
+	---------------------------------------------------------------------------------------------------------------------------------------
+>OVERLAY:
+---------
+	1.Connect multiple Docker daemons together and enable swarm services to communicate with each other.
+	2.Can also use overlay networks to facilitate communication between a swarm service and a standalone container, or between two standalone 		  containers on different Docker daemons.
+	3.You need the following ports open to traffic to and from each Docker host participating on an overlay network:
+	    TCP port 2377 for cluster management communications
+	    TCP and UDP port 7946 for communication among nodes
+	    UDP port 4789 for overlay network traffic
+>sudo docker network create  -d overlay my_overlay_net		#To create a overlay n/w for swarm services.
+>sudo docker network create -d overlay --attachable my_attachable_overlay_net		#To create a overlay n/w for services to connect to standalone or to conect two standalone conatiners.
+
+	---------------------------------------------------------------------------------------------------------------------------------------
+>MACVLAN:
+---------
+	1.Allows you to assign MAC addrs to teh containers, making it appear as a single-physical device.
+	2.The Docker daemon routes traffic to containers by their MAC addresses.
+	3.Best suited for legacy applications, which need to be directly connected to the physical network.
+	---------------------------------------------------------------------------------------------------------------------------------------
+>NONE:
+------
+	1.For this container, disable all networking.
+	2.Usually used in conjunction with a custom network driver. None is not available for swarm services. 
+	---------------------------------------------------------------------------------------------------------------------------------------
+Summary::
+---------
+1.User-defined bridge networks are best when you need multiple containers to communicate on the same Docker host.
+2.Host networks are best when the network stack should not be isolated from the Docker host, but you want other aspects of the container to be isolated.
+3.Overlay networks are best when you need containers running on different Docker hosts to communicate, or when multiple applications work together using swarm services.
+4.Macvlan networks are best when you are migrating from a VM setup or need your containers to look like physical hosts on your network, each with a unique MAC address.
+5.Third-party network plugins allow you to integrate Docker with specialized network stacks.
