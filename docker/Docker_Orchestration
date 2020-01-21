@@ -14,6 +14,7 @@ Docker swarm services::
 	2377	#For cluster manangement
 	7946	#For communication among nodes
 	4789	#For overlay n/w traffic )
+
 Create Swarm:(Creates Manager Node)
 -------------
 (Run in manager machine)::
@@ -36,6 +37,7 @@ Run in manager machine:
 ----------------------
 >docker node ls		#To check the list of all the nodes in the swarm(lists both worker and manager node)
 
+------------------------------------------------------------------------------------------------------------------------------------------------
 To create a service and scale the service::(Run in manager)
 ------------------------------------------------------------
 (TASK: A task is a container running in the service)
@@ -60,6 +62,7 @@ To create a service and scale the service::(Run in manager)
 >docker service inspect helloworld		#To verify the removal of the service.
 >docker ps					#To verify that the containers are removed.
 
+----------------------------------------------------------------------------------------------------------------------------------------------
 Docker-Node Draining:
 ---------------------
 (For Maintenance Use-Cases)
@@ -84,7 +87,7 @@ Docker-Node Draining:
 		>ifconfig --eth0	#Get the external IP.
 		>curl <IP-Addr>:8080	#To see the nginx homepage
 
-
+-----------------------------------------------------------------------------------------------------------------------------------------------
 DOCKER-COMPOSE::
 ----------------
 (On Linux machines you have to install docker-compose. On Mac & Windows it comes pre-installed)
@@ -95,7 +98,7 @@ To install on Linux Machines:
 >sudo chmod +x /usr/local/bin/docker-compose	#To change the permission
 >docker-compose -v	#To check the version
 
->Create a docker-compose.yml file
+Create a docker-compose.yml file
 	(PS: YAML is indentation specific!!!)
 
 >docker-compose config		#Lists any errors in the compose file, else displays the contents of the file
@@ -103,7 +106,7 @@ To install on Linux Machines:
 >docker ps			#To see the running containers in the compose
 >docker-compose down		#To take down the compose
 
-Docker Stack Deploy::
+Docker-STACK-DEPLOY::
 ---------------------
 >docker node ls			#To list all the running nodes
 >docker-compose up -d
@@ -112,6 +115,7 @@ Docker Stack Deploy::
 >docker stack ps mydemo		#To check the status of the stack
 >docker stack rm mydemo		#To remove the stack
 
+------------------------------------------------------------------------------------------------------------------------------------------------
 Locking Swarm Cluster::
 -----------------------
 >docker node ls			#To list the runnig nodes in the swarm
@@ -147,10 +151,102 @@ Mounting Volumes via Swarm::
 >cd /var/lib/docker/volumes/myvol/_data
 >ls
 (Should display test.txt)
-
 (Delete the service and check whether the Volume is removed or not)
 >docker service rm myservice		#To remove the service
 >docker volume ls			#To check whether myvol still persists or not
 >ls -l					#TO list test.txt
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+CONTROL-SERVICE-PLACEMENTS::
+----------------------------
+Following placement constraints can be applied on docker-swarm:
+1.Replicated or Global Services
+2.Resource Constraints(CPU & Memory)
+3.Placement Constraints(Only run on nodes with label "pci_compliance=true")
+4.Placement Preferences
+
+(Eg here based on placement preferences(Assuming there are 3 nodes in the swarm i.e Swarm01,02,03))
+
+To add label to a specific node:
+> docker node update --label-add <label>-<value> <node-ID>
+	Eg: docker node update --label-add region-blr <node-ID>
+>docker node inspect <node-ID>		#To check for applied label and passed values.
+
+>docker service create --name myservice --constraint node.labels.region==blr --replicas 2 nginx		#This creates  2 replicas of myservice from nginx image with placement constraints placed as "blr".Service will be launched in node with label as "region" with value as "blr"
+>docker service ps myservice		#To verify that all the tasks are started in the same node
+
+>docker node ls				#To get the node-ID
+>docker node inspect <node-ID>		#To get info on the node and to check for the labels in this case.
+
+
+Creating CUSTOM OVERLAY networks for DOCKER-SWARM::
+-------------------------------------------
+(Docker Swarm run in Overlay n/w. This allows inter-node communication)
+
+>docker network create --driver overlay myoverlay		#To create a new overlay n/w named myoverlay
+>docker network ls						#To list all the n/ws
+>docker service create --name myservice --network myoverlay --replicas 2 nginx		#To create 2 nginx replicas of service named myservice in the newly created myoverlay network.
+>docker service ps myservice			#To list the running serices.
+>docker ps 					#To get the container-ID
+>docker container inspect <container-id>	#To inspect the container and verify the overlay n/w
+
+To  remove Service and Network:
+>docker service rm mynetwork			#To remove the service
+>docker network rm myoverlay			#To remove the network
+
+To ENCRYPT the OVERLAY N/W::
+----------------------------
+
+>docker network create --opt encrpyted --driver overlay my_secure_overlay	#This creates a encrypted overlay n/w.When you run services in this n/w, IPSEC tunnels are created between the nodes in the swarm which provides secure communication.
+	NOTE:
+	-----
+		>IPSEC tunnels are created when n/w is created and services are run in it.
+		>This method uses AES 256 algorithm in GCM mode.
+		>Manager automatically rotates the ecryption key every 12hrs.
+		>Over;ay n/w encryption is not supported in Windows. If windows node attemts to communicate in this n/w, no error is detected but the node will not be able to communicate.
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Service Creation Using TEMPLATES::
+---------------------------------
+
+>docker service create --name <service-name> --hostname="{{.Node.Hostname}}-{{.Service.Name}}" <image>	 #Here, --hostname is called the flag, ".Node.Hostname" & ".Service.Name" are called as place-holders.
+
+	Eg: docker service cerate --name myservice --hostname="{{.Node.Hostname}}-{{.Service.Name}}" nginx		#Create the service from the nginx image naming it myservice, pass the node name(say swarm01) as the hostname in ".Node.Hostname" and pass the service name(say myservice) as name of the service in ".Service.Name"
+	   
+	NOTE: EXEC into the container and run "hostname" to view the output as swarm01-myservice.(PS:assuming the node name here is Swarm01)
+		
+	Following flags are allowed:
+		--hostname
+		--mount
+		--env
+	Following place-holders are allowed:
+		.Service.ID		.Node.ID		.Task.ID
+		.Service.Name		.Node.Hostname		.Task.Name
+		.Service.Labels					.Task.Slot
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

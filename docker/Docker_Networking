@@ -23,7 +23,7 @@ Docker-N/W Commands::
 >sudo docker network inspect bridge -f="{{json .IPAM.Config}}"	#To pass filters to narrow down the search results.
 
 >sudo docker network create --driver <n/w type>	<unique_name>	#To create a network n/w with desired n/w type.
-	Eg: sudo docker network create --driver bridge isolated_net(Creates new bridge n/w with name isolated_net)
+	Eg: sudo docker network create --driver bridge isolated_net	(Creates new bridge n/w with name isolated_net)
 
 Docker-Network-Drivers::
 ------------------------
@@ -72,10 +72,29 @@ USER-DEFINED BRIDGE::
 	    TCP port 2377 for cluster management communications
 	    TCP and UDP port 7946 for communication among nodes
 	    UDP port 4789 for overlay network traffic
+
+(Docker Swarm run in Overlay n/w. This allows inter-node communication)
+
 >sudo docker network create  -d overlay my_overlay_net		#To create a overlay n/w for swarm services.
 >sudo docker network create -d overlay --attachable my_attachable_overlay_net		#To create a overlay n/w for services to connect to standalone or to conect two standalone conatiners.
 
-	---------------------------------------------------------------------------------------------------------------------------------------
+
+>docker network create --driver overlay myoverlay		#To create a overlay n/w named myoverlay
+>docker network ls						#To list the n/ws
+>docker service create --name myservice --network myoverlay --replicas 2 nginx 	#To create a nginx service  with 2 replicas named myservice in the newly created myoverlay n/w
+
+To ENCRYPT the OVERLAY N/W::
+----------------------------
+
+>docker network create --opt encrpyted --driver overlay my_secure_overlay	#This creates a encrypted overlay n/w.When you run services in this n/w, IPSEC tunnels are created between the nodes in the swarm which provides secure communication.
+	NOTE:
+	-----
+		>IPSEC tunnels are created when n/w is created and services are run in it.
+		>This method uses AES 256 algorithm in GCM mode.
+		>Manager automatically rotates the ecryption key every 12hrs.
+		>Over;ay n/w encryption is not supported in Windows. If windows node attemts to communicate in this n/w, no error is detected but the node will not be able to communicate.
+
+	--------------------------------------------------------------------------------------------------------------------------------------
 >MACVLAN:
 ---------
 	1.Allows you to assign MAC addrs to teh containers, making it appear as a single-physical device.
