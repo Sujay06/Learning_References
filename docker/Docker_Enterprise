@@ -13,3 +13,16 @@ DOCKER-ENTERPRISE EDITION::
 	3.Image management
 	4.Container App management
 	5.Image Security Scanning
+---------------------------------------------------------------------------------------------------DOCKER EE OVERVIEW::
+--------------------
+>EE Installation
+>Activate EE License
+>UCP installation
+>Swarm via UCP and Access Control
+>DTR Installation and integrating it with UCP
+>Uninstalling DTR
+>Configuring Trusted CA and pushing images to DTR
+>DTR Backup
+----------------------------------------------------------------------------------------------------
+
+
