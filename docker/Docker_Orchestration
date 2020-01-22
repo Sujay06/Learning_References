@@ -196,22 +196,19 @@ To  remove Service and Network:
 
 To ENCRYPT the OVERLAY N/W::
 ----------------------------
-
 >docker network create --opt encrpyted --driver overlay my_secure_overlay	#This creates a encrypted overlay n/w.When you run services in this n/w, IPSEC tunnels are created between the nodes in the swarm which provides secure communication.
 	NOTE:
-	-----
-		>IPSEC tunnels are created when n/w is created and services are run in it.
+	-----	>IPSEC tunnels are created when n/w is created and services are run in it.
 		>This method uses AES 256 algorithm in GCM mode.
 		>Manager automatically rotates the ecryption key every 12hrs.
 		>Over;ay n/w encryption is not supported in Windows. If windows node attemts to communicate in this n/w, no error is detected but the node will not be able to communicate.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
-Service Creation Using TEMPLATES::
+SERVICE CREATION USING TEMPLATES::
 ---------------------------------
-
 >docker service create --name <service-name> --hostname="{{.Node.Hostname}}-{{.Service.Name}}" <image>	 #Here, --hostname is called the flag, ".Node.Hostname" & ".Service.Name" are called as place-holders.
 
-	Eg: docker service cerate --name myservice --hostname="{{.Node.Hostname}}-{{.Service.Name}}" nginx		#Create the service from the nginx image naming it myservice, pass the node name(say swarm01) as the hostname in ".Node.Hostname" and pass the service name(say myservice) as name of the service in ".Service.Name"
+	Eg: docker service cerate --name myservice -3-hostname="{{.Node.Hostname}}-{{.Service.Name}}" nginx		#Create the service from the nginx image naming it myservice, pass the node name(say swarm01) as the hostname in ".Node.Hostname" and pass the service name(say myservice) as name of the service in ".Service.Name"
 	   
 	NOTE: EXEC into the container and run "hostname" to view the output as swarm01-myservice.(PS:assuming the node name here is Swarm01)
 		
@@ -224,27 +221,62 @@ Service Creation Using TEMPLATES::
 		.Service.Name		.Node.Hostname		.Task.Name
 		.Service.Labels					.Task.Slot
 
-		
+------------------------------------------------------------------------------------------------------------------------------------------------
+SPLIT-BRAIN and QUORUM::
+------------------------
+>Swarm manager nodes use the Raft Consensus Algorithm to manage the swarm state. 
+>There is no limit on the number of manager nodes.
+>The decision about how many manager nodes to implement is a trade-off between performance and fault-tolerance. Adding manager nodes to a swarm makes the swarm more fault-tolerant. However, additional manager nodes reduce write performance because more nodes must acknowledge proposals to update the swarm state. This means more network round-trip traffic.
+>Raft requires a majority of managers, also called the quorum, to agree on proposed updates to the swarm, such as node additions or removals. 
+>If a swarm loses the quorum of managers, swarm tasks on existing worker nodes continue to run. However, swarm nodes cannot be added, updated, or removed, and new or existing tasks cannot be started, stopped, moved, or updated.
+>Use (N-1)/2 (where N is the number of Manager-Nodes in the cluster) formula to determine the number of faulty nodes that the cluster can handle.
+
+HIGH AVAILABILITY OF DOCKER-MANAGER-NODES::
+-------------------------------------------
+>docker swarm join-token manager	#Get the token from here and run it in other nodes to make them managers and join the swarm.
+	NOTE:ALWAYS USE ODD NUMBER OF MANAGER NODES(3,5,7)
+
+>Distribute the manager nodes across 3-AZs to have best fault-tolerant cluster
+
+Swarm manager nodes 	Repartition (on 3 Availability zones)
+	3 			1-1-1
+	5 			2-2-1
+	7 			3-2-2
+	9 			3-3-3
 
 
+RUNNING MANAGER-ONLY NODE::
+---------------------------
+>By default, manager also acts as a worker node i.e tasks from the services would also be created in manager node. However, this approach is not recommended as it consumes CPU, Memory, I/O and ideally manager node should only perform managerial operations.
 
+	To avoid this scenario, drain the manger node once the service is created.
+>docker swarm init --advertise-addr <IP>
+	Get the swarm token for workers and run it in worker nodes.
+>docker node ls
+>docker service create --name myservice --replicas 5 nginx
+>docker node ps myservice
+>docker node update --availability drain < node-ID>
+	This will load balance the tasks amongst different worker nodes and the manager's resource would be available for managerial tasks!!.
 
+RECOVERING FROM LOST QUORUM::
+-----------------------------
+When the quorum is lost and the leader of the manager nodes is inactive,run the following commands in one of the active manager nodes.
+>docker swarm init --force-new-cluster --advertise-addr <IP>	#Pass the IP which was previously advertised.
+	Cluster data is retrievable because all the manager node data is stored in "Internal Distributed State Store" for manager nodes.
 
+-----------------------------------------------------------------------------------------------------------------------------------------------
+DOCKER-SYSTEM COMMANDS::
+-------------------------
+>docker system df	#To check the disk space utilization
+>docker system df -v
 
+>docker system info	#Captures all the info regarding the docker host
 
+>docker system events	#Basically for logs capturing. Works on Containers, Images,Volumes, Networks & Docker-daemon
+				NOTE:Read the docs for more info. This is important!!!....
+>docker system prune
 
-
-
-
-
-
-
-
-
-
-
-
-
+-----------------------------------------------------------------------------------------------------------------------------------------------
 
 
 

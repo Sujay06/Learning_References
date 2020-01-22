@@ -1,0 +1,15 @@
+DOCKER-ENTERPRISE EDITION::
+---------------------------
+>Docker EE is officially supported by Docker Team.
+
+>Docker EE comes in 3 tiers:
+	1.Basic
+	2.Standard
+	3.Advance
+
+>Docker EE capabilities:
+	1.Container engine and built in orchestration, networking and security
+	2.Certified infrastructure, plugins and ISV containers
+	3.Image management
+	4.Container App management
+	5.Image Security Scanning
