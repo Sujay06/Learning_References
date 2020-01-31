@@ -25,3 +25,87 @@ DOCKER EE OVERVIEW::
 >Configuring Trusted CA and pushing images to DTR
 >DTR Backup
 ----------------------------------------------------------------------------------------------------------------------------------------------
+Installation::
+--------------
+1.Docker-EE Container Engine.
+2.UCP
+3.DTR
+
+
+1.Docker-EE Installation::
+------------------------
+(Here, Docker-EE is installed over Ubuntu18.04 AWS Instance)
+
+Installation includes:
+1.Set-up the Repository for Docker-EE
+2.Download and install Docker-EE
+
+To set-up the Docker-EE Repository::
+-------------------------------------
+sudo apt-get remove docker docker-engine docker-ce docker-ce-cli docker.io
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+DOCKER_EE_URL="https://storebits.docker.com/ee/trial/sub-916ecfcf-2e1a-4f7e-8cbe-52a0a1c51b43"
+DOCKER_EE_VERSION=19.03
+curl -fsSL "${https://storebits.docker.com/ee/trial/sub-916ecfcf-2e1a-4f7e-8cbe-52a0a1c51b43}/ubuntu/gpg" | sudo apt-key add -
+sudo apt-key fingerprint 6D085F96
+sudo add-apt-repository "deb [arch=$(dpkg --print-architecture)] $DOCKER_EE_URL/ubuntu $(lsb_release -cs) stable-$DOCKER_EE_VERSION"
+
+To install Docker-EE Engine::
+-----------------------------
+sudo apt-get update
+sudo apt-get install docker-ee docker-ee-cli containerd.io
+apt-cache madison docker-ee
+sudo apt-get install docker-ee=<VERSION_STRING> docker-ee-cli=<VERSION_STRING> containerd.io
+sudo docker run hello-world
+
+
+
+2.Install Universal Control Plane(UCP)::
+----------------------------------------
+docker container run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:3.2.4 install  --host-address <node-ip-address> --interactive
+
+
+
+3.Install DTR::
+---------------
+(DTR installs on top of UCP, so UCP is a pre-requisite)
+
+docker container run -it --rm docker/dtr:2.7.4 install --ucp-node <node-hostname> --ucp-insecure-tls
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+To activate the license::
+-------------------------
+
+>docker login
+>docker engine activate
+>Enter the number provided on the screen.
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
