@@ -25,13 +25,13 @@ DOCKER-ENTERPRISE EDITION::
 Docker EE Architecture::
 ------------------------
 
-	     DTR         || 	Your Applications
-	-----------------------------------------------------
-			   UCP					<<== Deploy and Manage by USER
-	-----------------------------------------------------
-			DOCKER EE
-	-----------------------------------------------------
-	Cloud Services || Virtual Servers || Physical Servers
+Pull/Push Images =>     DTR         || 	Your Applications
+		-----------------------------------------------------
+Run Images   			UCP				<= Deploy and Manage by USER
+		-----------------------------------------------------
+				DOCKER EE
+		-----------------------------------------------------
+		Cloud Services || Virtual Servers || Physical Servers
 
 	
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -115,8 +115,8 @@ To activate the license::
 >Enter the number provided on the screen.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
-DOCKER-EE UCP::
----------------
+DOCKER-EE Universal Control Plane(UCP)::
+----------------------------------------
 >UCP is the enterprise-grade cluster management solution from Docker EE.
 >Manage everything from a centralized console.
 >Deploy, Manage and Monitor
@@ -135,27 +135,151 @@ DOCKER-EE UCP::
 	Worker Node:
 
 		UCP Worker
-	------------------------------
+	--------------------------e----
 		UCP Agent
 	------------------------------
 		Docker EE
 
+
+Installation::
+--------------
+Step1:	Prerequisites:
+	--------------
+	>Make sure all the nodes have the same Docker-EE version installed.
+	>Make sure the System and OS requirements are met.
+	>For customized volumes(named volumes), create them before hand before UCP installation.
+
+Step2:	Run the commands:
+	-----------------
+>docker image pull docker/ucp:3.2.4	#pull the latest UCP image from docker-hub
+>docker container run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:3.2.4 install --host-address <IP-address> --interactive
+
+Step3:	License your installtion:
+	-------------------------
+	(Get your .lic file from docker-hub account)
+>Admin Settings=>License=>Upload License
+
+Step4:	Join Manger Nodes
+Step5:	Join Worker Nodes
+
 >When you deploy UCP, it starts running a globally scheduled service called "ucp-agent".
->If the node is :
+>If the node is:
 	1.Manager: "ucp-agent" service automatically starts serving all UCP components,including the UCP web UI and data stores used by UCP.By promoting a node to manager, UCP automatically becomes highly available and fault tolerant.
 	2.Worker: "ucp-agent" service starts serving a proxy service that ensures only authorized users and other UCP services can run Docker commands in that node.
 
 
+Upgrading:
+----------
+	Check the docker-docs for steps to follow while updating UCP to a newer version.
 
 
+Uninstall:
+----------
+To unistall UCP, run the following commands in manager node.
+>docker container --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:3.2.4 uninstall-ucp --interactive
+
+(If the above command gives errors, run the following commands manually)
+>docker service rm -f $(docker service ls name=ucp -a -q)
+>docker container rm -f $(docker ps name=ucp -a -q)
+>docker volume rm -f $(docker volume ls name-ucp -a -q)
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Docker Trusted Registry(DTR)::
+------------------------------
+>DTR is the enterprise image storage solution.
+>Install it behind a firewall, so that images are stored securely.
+>DTR can be used as a part os CI/CD for your application.
+>DTR has a web user interface that allows authorized users in your organization to browse Docker images and review repository events. 
+>It allows you to see what Dockerfile lines were used to produce the image and, if security scanning is enabled, to see a list of all of the software installed in your images.
+
+Features:
+---------
+1.Availability: DTR is highly available through the use of multiple replicas of all containers and metadata.
+2.Efficiency: DTR has the ability to cache images closer to users to reduce the amount of bandwidth used when pulling Docker images.DTR has the ability to clean up unreferenced manifests and layers.
+3.Built-in Access Control: Uses RBAC, and integrates with LDAP and Active Directory.
+4.Security Scanning: Scans all the layers in the image for vulnerabilites and list them if any. It also maintains a vulneravility database which is kept upto date by periodic updates.
+5.Image Signing: DTR ships with Notary built in so that you can use Docker Content Trust to sign and verify images.
+
+Architecture:
+-------------
+	(See the docker-ee architecture image above)
+Note:	For High Availability, deploy DTR one in each of the worker node.
+
+Installation:
+-------------
+(DTR should be installed onto a woker node managed by UCP)
+
+Step1:	Meet the system requirements.
+Step2:	Install UCP(PS: DO NOT install UCP and DTR on the same node for it may lead to potential port and resource confilcts)
+	Install DTR on the worker nodes and UCP on the manager nodes.
+
+> Admin Settings => DTR => Select onto which UCP Worker node DTR must be installed => run the command which appears below in the worker node
+
+docker run -it --rm docker/dtr install --ucp-node node01 --ucp-username admin --ucp-url https://159.89.168.70 --ucp-insecure-tls	#This ins the command to install DTR which appears in DTR page once all the necessary settings are filled.
+
+Image Storage:
+--------------
+By default, Docker Trusted Registry stores images on the filesystem of the node where it is running, but you should configure it to use a centralized storage backend.
+
+DTR supports these storage backends:
+	>NFS
+	>Amazon S3
+	>Cleversafe
+	>Google Cloud Storage
+	>OpenStack Swift
+	>Microsoft Azure
+
+Interact with DTR:
+------------------
+1.DTR has a web UI where you can manage settings and user permissions.
+2.Push and pull images using the standard Docker CLI client or other tools that can interact with a Docker registry.
 
 
+Configuring Trusted CA:
+-----------------------
+	(When you run the command to install DTR, a TLS certificate is generated, which provides all the possible dns names with an IP address. COPY this and save it)
+At this point,Try logging in with the dns or IP addr provided.This must result in "x509: certificate signed by unknown authority"
 
+Configuring trusted ca is OS specific. Refer docs for further info!!
+(Here we configure for ubuntu)
+>sudo curl -k https://<dtr-domain-name>/ca -o /usr/local/share/ca-certificates/<dtr-domain-name>.crt	# Download the DTR CA certificate
+>sudo update-ca-certificates	#Refresh the list of certificates to trust
+>sudo service docker restart	# Restart the Docker daemon	
 
+Push/Pull images to DTR::
+-------------------------
+(Create a repository in the DTR before-hand)
 
+>docker tag image-name:<version no> dtr-domain-name>/reponame	#To tag a image.
+	Eg: docker tag busybox:latest example.com/admin/webserver:v1
+>docker push <dtr-domain-name>/reponame/image-name:<version no>	#To push a image
+	Eg:docker push example.com/admin/webserver:v1
 
+DTR-Backup::
+------------
+(DTR backup command does not cause a downtime for DTR)
 
+NOTE:
+-----
+>DTR backup command creates backups only of configurations and image metadata
+>This does not backup users and organizations.If this is required, take UCP backup.
+>This does not backup Docker images stored in the registry
 
+Run the following command to perform the backup:
+	docker run --log-driver none -i --rm docker/dtr backup --ucp-url https://172.31.40.237 -ucp-insecure-tls --ucp-username admin --ucp-password YOUR-PASSWORD-HERE > backup.tar
 
+Unistalling DTR:
+----------------
+Uninstall has to steps.
+1.To remove the containers volumes and destroy the running DTR.
+2.Remove the DTR stale entry from UCP page.
 
+Step1:	(Run this command in node where DTR is installed)
+>docker run --rm -it docker/dtr:2.6.3 destroy --ucp-insecure-tls 	#This prompts to enter the UCP URL(i.e https://159.89.168.70).Insecure because previously insecure DTR Version was installed.Removes all the replicas, containers and volumes.
 
+Step2:	(Run the following commands in node where UCP is installed)
+>docker exec -e ETCDCTL_API=3 ucp-kv etcdctl --endpoints https://127.0.0.1:2379 get /orca/v1/config2/dtr/ --prefix --keys-only 2>/dev/null
+>docker exec -e ETCDCTL_API=3 ucp-kv etcdctl --endpoints https://127.0.0.1:2379 del /orca/v1/config2/dtr/staleDTR 2>/dev/null
+	(re-run the get command for a quick validation)
+	(verify the removal of DTR entry from the UCP Admin Settings page)
+-------------------------------------------------------------------------------------------------------------------------------------------------	
