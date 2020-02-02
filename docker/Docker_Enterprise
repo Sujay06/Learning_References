@@ -8,11 +8,32 @@ DOCKER-ENTERPRISE EDITION::
 	3.Advance
 
 >Docker EE capabilities:
+------------------------
 	1.Container engine and built in orchestration, networking and security
 	2.Certified infrastructure, plugins and ISV containers
 	3.Image management
 	4.Container App management
 	5.Image Security Scanning
+
+>Docker EE Key Features:
+------------------------
+	1.Choose Orchestrators(choose b/w docker swarm (OR) Kubernetes (OR) both)
+	2.Built-in security(Image Scanning,Policies etc) and Role Based Access Control(RBAC)
+	3.Deploy, Manage and Monitor
+	4.Centralised Cluster Management(use UCP)
+
+Docker EE Architecture::
+------------------------
+
+	     DTR         || 	Your Applications
+	-----------------------------------------------------
+			   UCP					<<== Deploy and Manage by USER
+	-----------------------------------------------------
+			DOCKER EE
+	-----------------------------------------------------
+	Cloud Services || Virtual Servers || Physical Servers
+
+	
 ---------------------------------------------------------------------------------------------------------------------------------------------
 DOCKER EE OVERVIEW::
 --------------------
@@ -35,6 +56,10 @@ Installation::
 1.Docker-EE Installation::
 ------------------------
 (Here, Docker-EE is installed over Ubuntu18.04 AWS Instance)
+
+>Default Docker install directory: 
+	Docker Data Root Directory:		/var/lib/docker
+	Containerd Data Root Directory:		/var/lib/containerd
 
 Installation includes:
 1.Set-up the Repository for Docker-EE
@@ -74,26 +99,51 @@ docker container run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker
 docker container run -it --rm docker/dtr:2.7.4 install --ucp-node <node-hostname> --ucp-insecure-tls
 
 -------------------------------------------------------------------------------------------------------------------------------------------------
+LICENSING::
+-----------
+	Steps:
+    		1.Set up your Docker Hub ID, Organizations, and Team.
+    		2.Register your Docker license key.
+    		3.Activate your subscription.
+    		4.Access and download your license.
+    		5.Apply the license.
+
 To activate the license::
 -------------------------
-
 >docker login
 >docker engine activate
 >Enter the number provided on the screen.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
+DOCKER-EE UCP::
+---------------
+>UCP is the enterprise-grade cluster management solution from Docker EE.
+>Manage everything from a centralized console.
+>Deploy, Manage and Monitor
+>Built-in security and access control(Built-in authentication mechanism and integration with LDAP)
+>Uses RBAC
+>Once the UCP instance is deployed, developers and IT operations no longer interact with Docker Engine directly, but interact with UCP instead.
 
+	Manager Node:
 
+		UCP Manager
+	------------------------------
+		UCP Agent
+	------------------------------
+		Docker EE
 
+	Worker Node:
 
+		UCP Worker
+	------------------------------
+		UCP Agent
+	------------------------------
+		Docker EE
 
-
-
-
-
-
-
-
+>When you deploy UCP, it starts running a globally scheduled service called "ucp-agent".
+>If the node is :
+	1.Manager: "ucp-agent" service automatically starts serving all UCP components,including the UCP web UI and data stores used by UCP.By promoting a node to manager, UCP automatically becomes highly available and fault tolerant.
+	2.Worker: "ucp-agent" service starts serving a proxy service that ensures only authorized users and other UCP services can run Docker commands in that node.
 
 
 
