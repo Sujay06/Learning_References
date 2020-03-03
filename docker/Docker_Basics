@@ -18,7 +18,7 @@ sudo apt-get remove docker docker-engine docker-ce docker-ce-cli docker.io
 ----------------------------------------------------------------------------------------------------------------------
 DOCKER COMMANDS::
 -----------------
->sudo passwd root	#To set the Ubuntu Password(Enter and Re-Enter your passwords here-)
+>sudo passwd root	#To set the Ubuntu Password(Enter and Re-Enter your passwords here)
 >su root		#To login as root user
 
 >sudo docker info			#Provides all info regarding most of the docker components 
@@ -53,6 +53,8 @@ DOCKER COMMANDS::
 >sudo docker inspect <image> --format='{{json.parameter}}'	#when the parameter has the parent-shild relationship and you need to list it.
 	Eg:sudo docker inspect ubuntu -f='{{json .Config}}'	#outputs all the Config parameters.
 	   sudo docker inspect ubuntu -f='{{.ContainerConfig.Hostname}}'	#Outputs only Hostname
+
+>docker top <container-ID or container-name>	#To list the processes running inside a container.
 
 >sudo docker run --help			#To list all the options available for docker run(--help works with all docker commands!!)
 >sudo docker run --help | grep rm 	#To view what are the options available for run adn shortlist it to rm 
@@ -92,7 +94,7 @@ DOCKER COMMANDS::
 
 >sudo docker commit <Container-ID> <new-image-name>		#To make changes inside the container and save it. This creates a new docker image from which new container can be started. The newly started contanier reflects all the changes made.
 >sudo docker commit --change='CMD ["ping"]' <container-id>	#To modify CMD from sh to ping at runtime.This creates a new docker image from which new container can be started. The newly started contanier reflects all the changes made.
-		(COMMIT allows user to change CMD,WORKDIR,ENV,LABEL,ENTRYPOINT,EXPOSE,ONBUILD,USER,VOLUME,WORKDIR parameters of the container. PS: new images are created at every commit, which increases disk-space)
+		(COMMIT allows user to change CMD,WORKDIR,ENV,LABEL,ENTRYPOINT,EXPOSE,ONBUILD,USER,VOLUME parameters of the container. PS: new images are created at every commit, which increases disk-space)
 
 >sudo docker search <image>	#To search for all the images listed in docker hub with the specified name
 	Eg: sudo docker search nginx
@@ -142,42 +144,6 @@ TO MODIFY AN IMAGE TO A SINGLE LAYER::
 >sudo docker history mynginx_latest	#To view the single layer image structure	.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
-
------------------------------------------------------------------------------------------------------------------------------------------------
-DOCKER SWARM SERVICES::
------------------------
-Docker SWARM requires a .yml file which specifies the container parameters and constraints.
-
-(Docker-Compose.yml)
---------------------
-version: "3"
-services:
-  web:
-    # replace username/repo:tag with your name and image details
-    image: andalike/node-web-app
-    deploy:
-      replicas: 5
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: 50M
-      restart_policy:
-        condition: on-failure
-    ports:
-      - "4000:80"
-    networks:
-      - webnet
-networks:
-  webnet:
-
->sudo docker swarm init							#To initialise SWARM.
->sudo docker swarm init --advertise-address=172.x.x.x			#To initialise master node on the privateIP and allow worker nodes to join the master.
->sudo docker stack -c deploy docker-compose.yml myapp			#To deploy swarm containers
->sudo docker node ls							#To list all the conatiners in the docker swarm service.
->sudo docker stack rm <app-name>					#To take down the application
->sudo docker swarm leave 						#To leave the swarm
-
----------------------------------------------------------------------------------------------------------------------------
 DOCKER DinD ::
 -----------------
 >sudo docker run -it -d docker:dind				  	#Pulls and runs docker-dind image from docker-hub.
@@ -230,7 +196,7 @@ TO PUSH AN IMAGE INTO THE DOCKER-REGISTRY::
 >sudo docker tag ubuntu localhost:5000/myubuntu	#To tag ubuntu to myubuntu(Give any preferred name)
 >sudo docker push localhost:5000/myubuntu	#pushes to registry container
 
->sudo docker pull localhost:5000/myubuntu	#To pull the custom ubuntu image for use(Pulls from the registry container and not DockerHib)
+>sudo docker pull localhost:5000/myubuntu	#To pull the custom ubuntu image for use(Pulls from the registry container and not DockerHub)
 
 TO PUSH AN IMAGE TO DOCKER-HUB::
 --------------------------------
@@ -246,5 +212,5 @@ BusyBox Commands:
 -----------------
 (Run a busybox image and exec into the container(use sh at the end instead of bash))
 >dd if=/dev/zero of=bigfile.txt bs=1M count=500		#To create a single txt file called bigfile.txt of sixe 500Mb inside busybox container
->du -sh bigfile.txt	#To list the size of the file caled bigfile.txt
+>du -sh bigfile.txt	#To list the size of the file caled bigfile
 

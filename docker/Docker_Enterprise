@@ -135,7 +135,7 @@ DOCKER-EE Universal Control Plane(UCP)::
 	Worker Node:
 
 		UCP Worker
-	--------------------------e----
+	------------------------------
 		UCP Agent
 	------------------------------
 		Docker EE
@@ -188,7 +188,7 @@ Docker Trusted Registry(DTR)::
 ------------------------------
 >DTR is the enterprise image storage solution.
 >Install it behind a firewall, so that images are stored securely.
->DTR can be used as a part os CI/CD for your application.
+>DTR can be used as a part of CI/CD for your application.
 >DTR has a web user interface that allows authorized users in your organization to browse Docker images and review repository events. 
 >It allows you to see what Dockerfile lines were used to produce the image and, if security scanning is enabled, to see a list of all of the software installed in your images.
 
@@ -266,7 +266,7 @@ NOTE:
 >This does not backup Docker images stored in the registry
 
 Run the following command to perform the backup:
-	docker run --log-driver none -i --rm docker/dtr backup --ucp-url https://172.31.40.237 -ucp-insecure-tls --ucp-username admin --ucp-password YOUR-PASSWORD-HERE > backup.tar
+	docker run --log-driver none -i --rm docker/dtr backup --ucp-url https://172.31.40.237 -ucp-insecure-tls --ucp-username admin --ucp-password YOUR-PASSWORD-HERE  > backup.tar
 
 Unistalling DTR:
 ----------------
@@ -282,4 +282,51 @@ Step2:	(Run the following commands in node where UCP is installed)
 >docker exec -e ETCDCTL_API=3 ucp-kv etcdctl --endpoints https://127.0.0.1:2379 del /orca/v1/config2/dtr/staleDTR 2>/dev/null
 	(re-run the get command for a quick validation)
 	(verify the removal of DTR entry from the UCP Admin Settings page)
+
 -------------------------------------------------------------------------------------------------------------------------------------------------	
+Security::
+----------
+
+>Image Scaning:
+---------------
+>Scans for vulnerabilites in the image layers.	
+>Can be done either manually or "On Push".
+
+UCP Client Bundles:
+-------------------
+>A group of certificates that can be downloaded directly from UCP.
+>Depending on the permission granted to a user, one can execute docker swarm commands from remote machine that can take effect on the remote cluster.
+	Eg: Create a new service in UCP from your laptop.
+	    Login to remote container from your laptop without SSH(Via API)
+
+Namespaces:
+-----------
+>Inter-Process Communication(IPC)
+>Process(PID)
+>Network(net)
+>User-ID(user)
+>Mount(mnt)
+>UTS
+
+Control-Groups(cgroups):
+------------------------
+>Cgroups is a Linux feature that limits, accounts for, and isolates the resource usage(CPU, Memory, Disk I/O, Network etc)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

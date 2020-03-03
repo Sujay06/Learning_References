@@ -138,8 +138,8 @@ Locking Swarm Cluster::
 Mounting Volumes via Swarm::
 ----------------------------
 >docker service create --name myservice --mount type=volume,source=myvol,target=/mypath nginx		#Create a service named myservice from nginx image and mount "myvol" volume specified in the path /mypath.
->docker service ps myservice		#To check in which swarm the volume is created and mounted.
-(Go to the particular swarm)
+>docker service ps myservice		#To check in which swarm node the volume is created and mounted.
+(Go to the particular swarm node)
 >docker ps				#To list the running task
 >docker volume ls			#To list the volumes in the node
 >docker exec -it <Container-ID> bash	#Enter into the container
@@ -196,19 +196,19 @@ To  remove Service and Network:
 
 To ENCRYPT the OVERLAY N/W::
 ----------------------------
->docker network create --opt encrpyted --driver overlay my_secure_overlay	#This creates a encrypted overlay n/w.When you run services in this n/w, IPSEC tunnels are created between the nodes in the swarm which provides secure communication.
+>docker network create --opt encrpyted w--driver overlay my_secure_overlay	#This creates a encrypted overlay n/w.When you run services in this n/w, IPSEC tunnels are created between the nodes in the swarm which provides secure communication.
 	NOTE:
 	-----	>IPSEC tunnels are created when n/w is created and services are run in it.
 		>This method uses AES 256 algorithm in GCM mode.
 		>Manager automatically rotates the ecryption key every 12hrs.
-		>Over;ay n/w encryption is not supported in Windows. If windows node attemts to communicate in this n/w, no error is detected but the node will not be able to communicate.
+		>Overlay n/w encryption is not supported in Windows. If windows node attemts to communicate in this n/w, no error is detected but the node will not be able to communicate.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 SERVICE CREATION USING TEMPLATES::
 ---------------------------------
 >docker service create --name <service-name> --hostname="{{.Node.Hostname}}-{{.Service.Name}}" <image>	 #Here, --hostname is called the flag, ".Node.Hostname" & ".Service.Name" are called as place-holders.
 
-	Eg: docker service cerate --name myservice -3-hostname="{{.Node.Hostname}}-{{.Service.Name}}" nginx		#Create the service from the nginx image naming it myservice, pass the node name(say swarm01) as the hostname in ".Node.Hostname" and pass the service name(say myservice) as name of the service in ".Service.Name"
+	Eg: docker service cerate --name myservice --hostname="{{.Node.Hostname}}-{{.Service.Name}}" nginx		#Create the service from the nginx image naming it myservice, pass the node name(say swarm01) as the hostname in ".Node.Hostname" and pass the service name(say myservice) as name of the service in ".Service.Name"
 	   
 	NOTE: EXEC into the container and run "hostname" to view the output as swarm01-myservice.(PS:assuming the node name here is Swarm01)
 		
@@ -278,6 +278,13 @@ DOCKER-SYSTEM COMMANDS::
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
+Swarm initialized: current node (w49iulhgs2i6n4ul0iawsbhb8) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-663vhrppl2l4vn4dmz7r1w0ak60r1hm4yb0orz7wmsfa60u2fg-7mlwa5emx8d1m7eok65mynd63 172.31.41.2:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
 
 
 

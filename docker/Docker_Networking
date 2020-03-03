@@ -55,7 +55,7 @@ Example:
 USER-DEFINED BRIDGE::
 ---------------------
 >Provides user-friendly DNS resolution(You can ping other containers on this n/w using the custom names instead of their IPs)
->Better container isoationa dn interoperability.
+>Better container isolation and interoperability.
 	---------------------------------------------------------------------------------------------------------------------------------------
 >HOST:
 ------
