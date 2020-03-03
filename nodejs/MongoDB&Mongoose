@@ -1,0 +1,17 @@
+>MongoDb is NoSql DB
+>Mongoose is a package-manager for mongoDb
+
+>mkdir mongo-demo
+>cd mongo-demo
+>npm init -y		#To initialze the package.json
+>npm -i mongoose	#Gives us simple APIs to work with mongoDB.
+>code .
+>create index.js	#In VSCode
+
+
+Mongoose Methods:
+-----------------
+>mongoose.connect('URL/IP')	#To connnet to the DB
+>mongoose.schema		#To create a schema of the DB
+>mongoose.model			#To create a model out of the schema
+

@@ -1,0 +1,97 @@
+AWS CLI COMMANDS::
+---------------------
+>aws configure		#For single user(by default)
+>aws configure --profile testuser	#For Multiuser use --profile <name>
+>aws configure --profile Produser	#For Multiuser use --profile <name>
+	(Enter Access Key, Secret Key, Default region and output format)
+
+>aws configure set region ap-south-1 --profile USER	#To override the default config value use configure set.Here the default region is overridden and new region is set to ap-south-1.
+>aws configure get region --profile default		#To fetch config details for the user use configure get.
+
+>Credentials are stored in: ~/.aws/credentials
+>Configurations are stored in : ~/.aws/config
+
+Content in Credentials file:
+----------------------------
+>Access Key
+>Secret Access key
+
+Content in Config file:
+-----------------------
+>Region
+>Output Format
+>Api Versions
+>User Profiles(Named Profiles)
+
+
+Install AWS-CLi:(On Linux)
+-----------------
+>curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"	# -o copies .zip file from link to a local name .zip file.
+>unzip awscliv2.zip		#unzip the file
+>sudo ./aws/install		#Run the install program.
+>aws --version			#To check the version.
+
+To update to a higher version:
+------------------------------
+(Install as per above steps)
+>which aws			#displays the folder path in which awscli is installed(usually /usr/local/bin/aws)
+>ls -l /usr/local/bin/aws	#To detect the symlinks installation dir.
+>sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update	#update the cli.
+
+Uninstalling:
+-------------
+>which aws				#To detect the symlinks installation dir.
+>ls -l /usr/local/bin/aws		#Go to the symlink path
+>sudo rm /usr/local/bin/aws		#Delete the symlink
+>sudo rm /usr/local/bin/aws2_completer	#Delete the symlink
+>sudo rm -rf /usr/local/aws-cli
+
+
+Installing using PiP:
+---------------------
+(pip3 for python3)
+>pip3 install awscli
+(OR)
+>pip3 install awscli --upgrade --user
+>aws --version
+>pip3 list -o				#To check if any packages are outdated.
+
+>pip3 install --upgrade --user awscli	#To upgrade to the latest version
+
+>pip3 uninstall awscli			#To uninstall awscli
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+S3::
+------
+
+aws s3 ls						#To list buckets
+aws s3 mb s3://bucketname				#To create a bucket
+aws s3 rb s3://bucketname				#To delete bucket
+aws s3 rm s3://bucketname/key 				#To delete an obj from a bucket
+aws s3 cp test.txt s3://bucketname/key			#To copy file test.txt  to a bucket
+aws s3 sync .  s3://bucketname				#To copy everything in local to a bucket
+aws s3 sync   s3://bucket1  s3://bucket2		#To copy all content from bucket1 to bucket2
+aws s3 mv test.txt s3://bucketname			#To move test.txt to a bucket
+aws s3 mv s3://bucketname/test.txt s3://bucketname/test2.txt		#To move test.txt from one bucket to test2.txt to 										another bucket
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+IAM::
+------
+>aws iam list-users		#To list all the users in the account.
+>aws iam list-users --profile <username>	#To list the specific user profile details.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+EC2::
+-------
+>aws ec2 create-security-group --group-name my-sg --description "My Security Group"	#To create a security group named my-sg
+> aws ec2 run-instances --image-id ami-xxxxxxxx --count 1 --instance-type t2.micro --key-name MyKeyPair --security-group-ids sg-903004f8 --subnet-id subnet-6e7f829e		#To launch a t2.micro instance with parameters
+> aws ec2 create-tags --resources i-5203422c --tags Key=Name,Value=MyInstance		#To add tag to a running instance
+> aws ec2 describe-instances --filters "Name=instance-type,Values=t2.micro" --query "Reservations[].Instances[].InstanceId"			#To list instances based on inst type
+(OR)
+> aws ec2 describe-instances --filters "Name=tag:Name,Values=MyInstance"		#To list instances based on tags
+(OR)
+> aws ec2 describe-instances --filters "Name=image-id,Values=ami-x0123456,ami-y0123456,ami-z0123456"		#To list instances based on ami-IDs
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+

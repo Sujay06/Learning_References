@@ -1,0 +1,52 @@
+SYSTEM-COMMANDS:
+----------------
+>sudo passwd			#To set the root user a password.
+>sudo su			#To login as the root user.
+>sudo -h				#Help parameters for sudo 
+>sudo apt-get udpate -y			#Download and install latest security patches.
+>sudo apt-get upgrade			#Download and install latest OS upgrade.
+>sudo apt-get install <pckg-name>	#Download any package(software)
+Eg: apt-get install htop
+>apt-get remove <package-name>	#To remove a particular package.
+Eg:apt-get remove htop
+>apt-get purge <package-name>	#To completely remove all the packages installed on your system.
+>apt-get autoremove		#To remove all the unnecessary packages automatically.
+>service --status-all		#To list the services launched at start-up.
+>sudo service <name> stop	#To stop a runnig service
+>sudo apt-get remove <name>	#To remove a service.
+
+>dpkg --list		#To list all the packages installed on your system.
+>info			#Similar to man, but often provides more detailed or precise information.
+>uname -a 		#Provides wide range basic info about the system.
+>top			#Displays the process using the most resources.
+>man 			#Displays manual page
+>man man		#Provides info about the manual itself
+>man intro		#Provides brief intro on linux commands
+>whatis <command>	#provides info on what the command does.
+Eg: whatis mkdir
+
+Memory::
+--------
+>free			#Displays the free memory on the system.
+>free -m		#To list the memory in the system.
+>vmstat			#provides info on the virtual memory
+>sudo lshw -c memory	#To list the RAM type and speed.
+>df			#Displays filesystem
+>df -h			#To list the filesystems and volumes
+>du			#Directory usage.Displays the size of the direcories.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
