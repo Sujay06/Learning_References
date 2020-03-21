@@ -88,8 +88,20 @@ aws s3 website s3://bucketname/ --index-document <index.html> --error-document <
 -------------------------------------------------------------------------------------------------------------------------------------------------
 IAM::
 ------
->aws iam list-users		#To list all the users in the account.
->aws iam list-users --profile <username>	#To list the specific user profile details.
+
+aws iam create-user --user-name John 	#To create a iam user named John
+aws iam list-users			#To list all the users in the account.
+aws iam list-users --profile <username>	#To list the specific user profile details.
+aws iam delete-user --user-name John	#Deletes user John
+
+
+aws iam create-group --group-name Admin	#To create a group named Admin
+aws iam list-groups			#To list all the groups in the account.
+aws iam delete-group --group-name Admin	#Deletes Admin group.
+
+aws iam create-role --role-name test-role	#To create a new role
+aws iam list-roles				#To list all the created roles.
+aws iam delet-role --role-name test-role	#Delete a role
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
