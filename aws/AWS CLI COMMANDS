@@ -65,14 +65,25 @@ S3::
 ------
 
 aws s3 ls						#To list buckets
+
 aws s3 mb s3://bucketname				#To create a bucket
+aws s3 mb s3://bucketname --region <region>		#To create a bucket in a new region
+
 aws s3 rb s3://bucketname				#To delete bucket
 aws s3 rm s3://bucketname/key 				#To delete an obj from a bucket
-aws s3 cp test.txt s3://bucketname/key			#To copy file test.txt  to a bucket
+
+aws s3 cp test.txt s3://bucketname/key			#To copy file test.txt fro =m local to s3 bucket
+
 aws s3 sync .  s3://bucketname				#To copy everything in local to a bucket
 aws s3 sync   s3://bucket1  s3://bucket2		#To copy all content from bucket1 to bucket2
-aws s3 mv test.txt s3://bucketname			#To move test.txt to a bucket
-aws s3 mv s3://bucketname/test.txt s3://bucketname/test2.txt		#To move test.txt from one bucket to test2.txt to 										another bucket
+
+aws s3 mv test.txt s3://bucketname					#To move test.txt to a bucket
+aws s3 mv s3://bucketname/test.txt s3://bucketname/test2.txt		#To move test.txt from one bucket to test2.txt to another bucket 
+
+aws s3 presign s3://bucketname/test.txt					#Sets presigned URL to obj  in the bucket (Default is 1hr)
+aws s3 presign s3://bucketname/test.txt --expires-in 86400		#Sets presigned URL to obj  in the bucket for 1 day
+
+aws s3 website s3://bucketname/ --index-document <index.html> --error-document <error-doc>	#Create a static website from out of s3 bucket(enable static web hosting on bucket prior)
 
 -------------------------------------------------------------------------------------------------------------------------------------------------
 IAM::
@@ -91,7 +102,7 @@ EC2::
 (OR)
 > aws ec2 describe-instances --filters "Name=tag:Name,Values=MyInstance"		#To list instances based on tags
 (OR)
-> aws ec2 describe-instances --filters "Name=image-id,Values=ami-x0123456,ami-y0123456,ami-z0123456"		#To list instances based on ami-IDs
+> aws ec2 describe-instances --filters "Name=image-id,Values=ami-x0123456,ami-y0123456,ami-z0123456"		#To list instances based on ami-IDs 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
