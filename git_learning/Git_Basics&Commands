@@ -46,7 +46,8 @@ Eg: git checkout master (or) git checkout branch1
 GIT LOGGING:
 -------------
 
-> git log 					#To check the history of the current branch that you are working on.
+>git log 					#To check the history of the current branch that you are working on.
+>git reflog					#To check all the reference logs that the git has maintained.
 >git revert <commit-id>				#To revert back to any commit made in a branch.This basically gets back to 							 any changes made to the repo before that commit.To view the changes made 							 after the commit was done use stash commit-id.
 
 --------------------------------------------------------------------------------------------------------------------
