@@ -41,7 +41,7 @@ DOCKER COMMANDS::
 >sudo docker images
 >sudo docker history <image-name>	#To list all the layers present in the Dockerfile used for creation of this image.
 	Eg: sudo docker history ubuntu (Lists all the layers in the Dockerfile of Ubuntu image)
-		(PS: To reduce the number os layers and save disl-space in an image use "&&" between recurring commands.)
+		(PS: To reduce the number os layers and save disk-space in an image use "&&" between recurring commands.)
 >sudo docker tag <image-id (OR) image-name> <tagname:version>
 	Eg:sudo docker tag my-image <test:v1.0>
 
@@ -90,7 +90,7 @@ DOCKER COMMANDS::
 		>netstat -ntlp				#To list all the active connections to the container.
 		>which netstat 				#To determine where the netstat file is located(displays /bin/netstat)
 		>exit(to exit the container)
-		>sudo docker exec -it test_nginx netstat -ntlp		#To show that exec commands work without being logically logged in to the conatiner(This can work only when the prosess is running with PID=1).
+		>sudo docker exec -it test_nginx netstat -ntlp		#To show that exec command works without being logically logged in to the conatiner(This can work only when the process is running with PID=1).
 
 >sudo docker commit <Container-ID> <new-image-name>		#To make changes inside the container and save it. This creates a new docker image from which new container can be started. The newly started contanier reflects all the changes made.
 >sudo docker commit --change='CMD ["ping"]' <container-id>	#To modify CMD from sh to ping at runtime.This creates a new docker image from which new container can be started. The newly started contanier reflects all the changes made.
@@ -140,7 +140,7 @@ TO MODIFY AN IMAGE TO A SINGLE LAYER::
 >sudo docker pull nginx
 >sudo docker run -dt --name mynginx nginx
 >sudo docker export mynginx > mynginx.tar	#To compress the image into a .tar file
->cat myngin.tar |sudo docker import - mynignx_latest	#To de-compress the image into a single layered image
+>cat mynginx.tar |sudo docker import - mynignx_latest	#To de-compress the image into a single layered image
 >sudo docker history mynginx_latest	#To view the single layer image structure	.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------

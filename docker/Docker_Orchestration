@@ -196,7 +196,7 @@ To  remove Service and Network:
 
 To ENCRYPT the OVERLAY N/W::
 ----------------------------
->docker network create --opt encrpyted w--driver overlay my_secure_overlay	#This creates a encrypted overlay n/w.When you run services in this n/w, IPSEC tunnels are created between the nodes in the swarm which provides secure communication.
+>docker network create --opt encrpyted --driver overlay my_secure_overlay	#This creates a encrypted overlay n/w.When you run services in this n/w, IPSEC tunnels are created between the nodes in the swarm which provides secure communication.
 	NOTE:
 	-----	>IPSEC tunnels are created when n/w is created and services are run in it.
 		>This method uses AES 256 algorithm in GCM mode.

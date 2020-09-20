@@ -8,13 +8,13 @@ To install Package.json::
 -------------------------
 >mkdir npm-demo				#To create a npm demo folder.
 >sudo npm i -g npm@<version.no>		#To install  spscific version of npm
->sudo npm init -y			#To create a package.json file
+>sudo npm init -y				#To create a package.json file
 
 -------------------------------------------------------------------------------------------------------------------------
 To install a node-package from NPM::
 ------------------------------------
 (List of all npm packages used in NodeJs Learning)
->npm install underscore	#To install undersore package(You can use flag i to insatll too instead of install(npm i underscore)).
+>npm install underscore	#To install underscore package(You can use flag i to insatll too instead of install(npm i underscore)).
 >npm i node-cmd			#To install node cmd
 >npm i node-ping		#To install node ping.
 >npm install node-cmd 		#To install node cmd.  
@@ -45,7 +45,7 @@ To list installed  NPM packages::
 >npm i mongoose@<version.no>		#To install a specfic version of a package.
 >npm outdated				#To list all the existing outdated packages.
 >npm -g outdated			#To list all the outdated global packages.
->npm update				#To update all the oudated packages to their most recent minor updates(Eg: v2.4.8 => v2.4.10 || Here 						 major updates cannot be performed)
+>npm update				#To update all the oudated packages to their most recent minor updates(Eg: v2.4.8 => v2.4.10 || Here major updates cannot be performed)
 >npm-check-update			#To list all the outdated major packages
 >npm-check-update -u (OR) ncu -u	#To update all outdated packages to the latest major package.
 >npm unistall <package-name> (OR) npm un <package-name>		#To unistall a package permanently.

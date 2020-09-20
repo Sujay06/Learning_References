@@ -72,7 +72,7 @@ aws s3 mb s3://bucketname --region <region>		#To create a bucket in a new region
 aws s3 rb s3://bucketname				#To delete bucket
 aws s3 rm s3://bucketname/key 				#To delete an obj from a bucket
 
-aws s3 cp test.txt s3://bucketname/key			#To copy file test.txt fro =m local to s3 bucket
+aws s3 cp test.txt s3://bucketname/key			#To copy file test.txt from local to s3 bucket
 
 aws s3 sync .  s3://bucketname				#To copy everything in local to a bucket
 aws s3 sync   s3://bucket1  s3://bucket2		#To copy all content from bucket1 to bucket2
